@@ -81,23 +81,26 @@
   .demo-zip .nm svg{width:12px;height:12px}
   .demo-cursor{position:absolute;left:0;top:0;width:22px;height:22px;z-index:5;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
   .demo-ripple{position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.5);left:0;top:0;opacity:0;transform:scale(0);z-index:4}
+  .demo-spark{position:absolute;left:80px;top:218px;width:7px;height:7px;border-radius:50%;background:#9df0e6;opacity:0;z-index:6;transform:scale(0)}
 
   @media (prefers-reduced-motion:no-preference){
     .clickdemo.play .demo-menu{animation:mMenu 6.5s var(--ease) infinite}
     .clickdemo.play .demo-item.hot{animation:mHot 6.5s var(--ease) infinite}
     .clickdemo.play .demo-cursor{animation:mCur 6.5s var(--ease) infinite}
     .clickdemo.play .demo-ripple{animation:mRip 6.5s var(--ease) infinite}
-    .clickdemo.play .demo-zip{animation:mZip 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-zip{animation:mZip 6.5s cubic-bezier(.34,1.56,.64,1) infinite}
     .clickdemo.play .demo-file{animation:mFile 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-spark{animation:mSpark 6.5s var(--ease) infinite}
   }
-  @keyframes mCur{0%{transform:translate(60px,238px);opacity:0}6%{opacity:1}30%{transform:translate(196px,120px)}36%{transform:translate(192px,124px)}40%{transform:translate(196px,120px)}72%{transform:translate(196px,120px)}92%{transform:translate(300px,250px);opacity:1}100%{transform:translate(300px,250px);opacity:0}}
-  @keyframes mMenu{0%,4%{opacity:0;transform:translateY(8px) scale(.97)}10%,64%{opacity:1;transform:none}72%,100%{opacity:0;transform:translateY(-6px) scale(.98)}}
+  @keyframes mCur{0%{transform:translate(60px,238px) scale(1);opacity:0}6%{opacity:1}30%{transform:translate(196px,120px) scale(1)}34%{transform:translate(193px,124px) scale(.8)}39%{transform:translate(196px,120px) scale(1)}70%{transform:translate(196px,120px) scale(1)}90%{transform:translate(312px,252px) scale(1);opacity:1}100%{transform:translate(312px,252px) scale(1);opacity:0}}
+  @keyframes mMenu{0%,4%{opacity:0;transform:translateY(-10px) scale(.9)}9%{opacity:1;transform:translateY(4px) scale(1.02)}13%{transform:translateY(0) scale(1)}64%{opacity:1;transform:none}72%,100%{opacity:0;transform:translateY(-6px) scale(.96)}}
   @keyframes mHot{0%,33%{background:transparent}38%,52%{background:rgba(77,124,255,.85)}60%,100%{background:transparent}}
-  @keyframes mRip{0%,34%{opacity:0;transform:translate(190px,118px) scale(0)}37%{opacity:.6;transform:translate(190px,118px) scale(1)}46%{opacity:0;transform:translate(190px,118px) scale(2.4)}100%{opacity:0}}
-  @keyframes mZip{0%,58%{opacity:0;transform:scale(.6) translateY(10px)}70%{opacity:1;transform:scale(1) translateY(0)}90%{opacity:1}100%{opacity:0}}
-  @keyframes mFile{0%,88%{opacity:1}96%,100%{opacity:1}}
+  @keyframes mRip{0%,34%{opacity:0;transform:translate(190px,118px) scale(0)}37%{opacity:.65;transform:translate(190px,118px) scale(1)}46%{opacity:0;transform:translate(190px,118px) scale(2.6)}100%{opacity:0}}
+  @keyframes mZip{0%,56%{opacity:0;transform:scale(.3) translateY(16px) rotate(-6deg)}63%{opacity:1;transform:scale(1.22) translateY(-5px) rotate(3deg)}70%{transform:scale(.92) translateY(2px) rotate(-1deg)}77%{transform:scale(1.05) rotate(0)}84%{transform:scale(1)}90%{opacity:1;transform:scale(1)}100%{opacity:0;transform:scale(1)}}
+  @keyframes mFile{0%,54%{transform:scale(1)}59%{transform:scale(.84)}64%{transform:scale(1.05)}69%{transform:scale(1)}100%{transform:scale(1)}}
+  @keyframes mSpark{0%,57%{opacity:0;transform:translate(0,0) scale(0)}62%{opacity:1;transform:translate(0,0) scale(1)}76%{opacity:0;transform:translate(var(--dx,0),var(--dy,-22px)) scale(.3)}100%{opacity:0}}
   /* reduced motion: show the end state statically */
-  @media (prefers-reduced-motion:reduce){ .demo-zip{opacity:1} .demo-cursor{display:none} .demo-ripple{display:none} }
+  @media (prefers-reduced-motion:reduce){ .demo-zip{opacity:1} .demo-cursor{display:none} .demo-ripple{display:none} .demo-spark{display:none} }
 
   /* ---- simple: window in whitespace ---- */
   .simple{background:var(--panel)}
@@ -213,6 +216,11 @@
       <div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#9df0e6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Reports.zip</div>
     </div>
     <div class="demo-ripple"></div>
+    <span class="demo-spark" style="--dx:-26px;--dy:-20px"></span>
+    <span class="demo-spark" style="--dx:24px;--dy:-26px;background:#8fb0ff"></span>
+    <span class="demo-spark" style="--dx:30px;--dy:6px"></span>
+    <span class="demo-spark" style="--dx:-30px;--dy:4px;background:#8fb0ff"></span>
+    <span class="demo-spark" style="--dx:3px;--dy:-34px"></span>
     <svg class="demo-cursor" viewBox="0 0 24 24"><path d="M4 2l16 8-7 2-2 7z" fill="#fff" stroke="#000" stroke-width="1"/></svg>
   </div></div>
 </div></section>
