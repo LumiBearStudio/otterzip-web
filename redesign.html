@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
+<title>OtterZip — the quiet archive tool for Windows</title>
+<link rel="icon" href="assets/otter.png">
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#000000; --panel:#111114; --card:#1a1a1d; --ink:#f5f5f7; --sub:#a1a1a6; --faint:#6e6e73;
+    --line:rgba(255,255,255,.12); --accent:#4d7cff; --accent2:#3fd6e0; --wide:1180px; --ease:cubic-bezier(.16,1,.3,1);
+  }
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI Variable Display","Segoe UI",system-ui,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;word-break:keep-all;overflow-wrap:break-word}
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;height:auto;display:block}
+  .wrap{max-width:900px;margin:0 auto;padding:0 24px}
+  .wide{max-width:var(--wide);margin:0 auto;padding:0 24px}
+  .grad{background:linear-gradient(96deg,#6ea0ff,#3fe0ea);-webkit-background-clip:text;background-clip:text;color:transparent}
+  @media (prefers-reduced-motion:no-preference){
+    .reveal{opacity:0;transform:translateY(30px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
+    .reveal.in{opacity:1;transform:none}
+  }
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:980px;font-weight:600;font-size:17px;padding:12px 24px;transition:transform .18s var(--ease),background .18s;white-space:nowrap;cursor:pointer;line-height:1.2}
+  .btn:active{transform:scale(.97)}
+  .btn-fill{background:var(--accent);color:#fff}.btn-fill:hover{background:#6b91ff}
+  .btn-soft{background:rgba(255,255,255,.10);color:var(--ink)}.btn-soft:hover{background:rgba(255,255,255,.16)}
+  .btn-link{color:var(--accent);font-size:17px;font-weight:500;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
+  .btn-link:hover{text-decoration:underline}
+  .btn svg,.btn-link svg{width:19px;height:19px}
+
+  nav{position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:rgba(0,0,0,.72);border-bottom:1px solid rgba(255,255,255,.10)}
+  nav .wide{display:flex;align-items:center;height:52px;gap:16px}
+  .brand{display:flex;align-items:center;gap:10px}.brand img{width:29px;height:29px;border-radius:8px}
+  .brand .wm{font-size:19px;font-weight:700;letter-spacing:-.3px}
+  nav .spacer{flex:1}
+  .langpick{position:relative;display:inline-flex;align-items:center}
+  .langpick svg{width:16px;height:16px;position:absolute;left:9px;pointer-events:none;color:var(--sub)}
+  #langsel{-webkit-appearance:none;appearance:none;background:transparent;border:1px solid var(--line);border-radius:980px;color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:6px 26px 6px 30px;cursor:pointer}
+  .langpick .chev{left:auto;right:9px}
+  nav .btn{font-size:14px;padding:7px 16px}
+
+  .hero{text-align:center;padding:96px 0 0}
+  .eyebrow{font-size:19px;font-weight:600;color:var(--accent);margin-bottom:10px}
+  .hero-title{font-size:clamp(52px,9vw,104px);line-height:1;font-weight:700;letter-spacing:-.03em;margin-bottom:20px}
+  .hero-sub{font-size:clamp(19px,2.5vw,26px);line-height:1.4;color:var(--sub);max-width:660px;margin:0 auto 30px}
+  .hero-cta{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .hero-by{font-size:14px;color:var(--faint);margin-top:16px}
+
+  section{padding:120px 0}
+  .sec-head{text-align:center;max-width:720px;margin:0 auto}
+  .sec-eyebrow{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px}
+  h2{font-size:clamp(32px,5.2vw,54px);line-height:1.08;font-weight:700;letter-spacing:-.02em}
+  .sec-body{font-size:clamp(18px,2.1vw,21px);line-height:1.45;color:var(--sub);margin-top:18px}
+
+  /* ---- THE CLICK demo ---- */
+  .clickdemo{margin:56px auto 0;display:flex;justify-content:center}
+  .scene{position:relative;width:380px;height:300px;max-width:100%}
+  .demo-file{position:absolute;left:20px;top:14px;display:flex;flex-direction:column;align-items:center;gap:6px;width:96px}
+  .demo-file .ic{width:60px;height:74px;position:relative;filter:drop-shadow(0 10px 20px rgba(0,0,0,.5))}
+  .demo-file .nm{font-size:13px;color:#cdd6e4;background:rgba(77,124,255,.18);border:1px solid rgba(77,124,255,.4);padding:1px 10px;border-radius:5px}
+  .demo-menu{position:absolute;left:120px;top:52px;background:#2b2b2b;border:1px solid rgba(255,255,255,.09);border-radius:11px;padding:6px;box-shadow:0 30px 70px rgba(0,0,0,.6);width:232px}
+  .demo-item{display:flex;align-items:center;gap:11px;height:44px;padding:0 12px;border-radius:7px;white-space:nowrap}
+  .demo-item img{width:22px;height:22px}
+  .demo-item span{font-size:14.5px;color:#f2f3f5}
+  .demo-zip{position:absolute;left:34px;top:196px;display:flex;flex-direction:column;align-items:center;gap:6px;width:96px}
+  .demo-zip .ic{width:60px;height:74px;position:relative;filter:drop-shadow(0 10px 22px rgba(63,214,224,.35))}
+  .demo-zip .nm{font-size:13px;font-weight:600;color:#9df0e6;background:rgba(63,214,224,.15);border:1px solid rgba(63,214,224,.4);padding:1px 10px;border-radius:5px;display:flex;align-items:center;gap:5px}
+  .demo-zip .nm svg{width:12px;height:12px}
+  .demo-cursor{position:absolute;left:0;top:0;width:22px;height:22px;z-index:5;filter:drop-shadow(0 2px 3px rgba(0,0,0,.6))}
+  .demo-ripple{position:absolute;width:12px;height:12px;border-radius:50%;background:rgba(255,255,255,.5);left:0;top:0;opacity:0;transform:scale(0);z-index:4}
+
+  @media (prefers-reduced-motion:no-preference){
+    .clickdemo.play .demo-menu{animation:mMenu 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-item.hot{animation:mHot 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-cursor{animation:mCur 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-ripple{animation:mRip 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-zip{animation:mZip 6.5s var(--ease) infinite}
+    .clickdemo.play .demo-file{animation:mFile 6.5s var(--ease) infinite}
+  }
+  @keyframes mCur{0%{transform:translate(60px,238px);opacity:0}6%{opacity:1}30%{transform:translate(196px,120px)}36%{transform:translate(192px,124px)}40%{transform:translate(196px,120px)}72%{transform:translate(196px,120px)}92%{transform:translate(300px,250px);opacity:1}100%{transform:translate(300px,250px);opacity:0}}
+  @keyframes mMenu{0%,4%{opacity:0;transform:translateY(8px) scale(.97)}10%,64%{opacity:1;transform:none}72%,100%{opacity:0;transform:translateY(-6px) scale(.98)}}
+  @keyframes mHot{0%,33%{background:transparent}38%,52%{background:rgba(77,124,255,.85)}60%,100%{background:transparent}}
+  @keyframes mRip{0%,34%{opacity:0;transform:translate(190px,118px) scale(0)}37%{opacity:.6;transform:translate(190px,118px) scale(1)}46%{opacity:0;transform:translate(190px,118px) scale(2.4)}100%{opacity:0}}
+  @keyframes mZip{0%,58%{opacity:0;transform:scale(.6) translateY(10px)}70%{opacity:1;transform:scale(1) translateY(0)}90%{opacity:1}100%{opacity:0}}
+  @keyframes mFile{0%,88%{opacity:1}96%,100%{opacity:1}}
+  /* reduced motion: show the end state statically */
+  @media (prefers-reduced-motion:reduce){ .demo-zip{opacity:1} .demo-cursor{display:none} .demo-ripple{display:none} }
+
+  /* ---- simple: window in whitespace ---- */
+  .simple{background:var(--panel)}
+  .simple .shot{max-width:560px;margin:48px auto 0}
+  .simple .frame{border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.10)}
+  .simple .cap{text-align:center;font-size:14px;color:var(--faint);margin-top:18px}
+
+  /* ---- no-ads wedge ---- */
+  .dark{background:radial-gradient(760px 420px at 50% 30%,rgba(77,124,255,.18),transparent 60%),#000;color:#f5f5f7;text-align:center}
+  .dark h2{font-size:clamp(40px,7vw,78px);letter-spacing:-.03em;color:#fff}
+  .dark .sec-body{color:#a1a1a6;max-width:640px;margin:22px auto 0}
+
+  /* ---- rust: speed motif ---- */
+  .rust .split,.native .split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;max-width:var(--wide)}
+  .rust .txt .sec-eyebrow,.native .txt .sec-eyebrow{text-align:left}
+  .rust .txt h2,.native .txt h2{font-size:clamp(30px,4.4vw,46px)}
+  .speed{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px}
+  .speed .row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .speed .row:last-child{margin-bottom:0}
+  .speed .lbl{font-size:14px;color:var(--sub);width:74px;flex:none}
+  .speed .track{flex:1;height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+  .speed .fill{height:100%;border-radius:6px;background:linear-gradient(90deg,#4d7cff,#3fe0ea);width:0}
+  .speed .done{font-size:13px;color:#9df0e6;width:52px;flex:none;text-align:right;opacity:0;transition:opacity .3s .5s}
+  @media (prefers-reduced-motion:no-preference){
+    .speed.go .fill{transition:width 1.1s var(--ease)}
+    .speed.go .fill{width:100%}
+  }
+  @media (prefers-reduced-motion:reduce){ .speed .fill{width:100%} .speed .done{opacity:1} }
+  .speed.go .done{opacity:1}
+
+  /* ---- native: two-up ---- */
+  .twoup{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:end}
+  .twoup .frame{border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.10)}
+
+  /* ---- formats strip ---- */
+  .formats{background:var(--panel);text-align:center}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:760px;margin:34px auto 14px}
+  .chip{font-size:14.5px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:8px 15px;border-radius:11px}
+  .formats .extra{font-size:15px;color:var(--faint)}
+
+  /* ---- download ---- */
+  .dlcards{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:880px;margin:52px auto 0;align-items:stretch}
+  .dlcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:34px 32px;display:flex;flex-direction:column;text-align:left}
+  .dlcard.free{border-color:rgba(63,214,224,.5);box-shadow:0 0 0 1px rgba(63,214,224,.14),0 20px 50px rgba(0,0,0,.4)}
+  .dlcard .kick{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+  .dlcard h3{font-size:24px;font-weight:700}
+  .dlcard .badge{font-size:14px;font-weight:700;padding:3px 11px;border-radius:980px}
+  .dlcard .badge.f{color:#4fd6c4;background:rgba(63,214,224,.14);border:1px solid rgba(63,214,224,.35)}
+  .dlcard .badge.p{color:var(--accent);background:rgba(77,124,255,.12);border:1px solid rgba(77,124,255,.3)}
+  .dlcard p.d{font-size:15.5px;color:var(--sub);margin:8px 0 24px;line-height:1.5}
+  .dlcard .btnrow{margin-top:auto}.dlcard .btn{width:100%;justify-content:center}
+  .dlcard .foot{font-size:13px;color:var(--faint);margin-top:13px}
+  .dlnote{max-width:700px;margin:26px auto 0;text-align:center;font-size:14px;color:var(--faint)}
+
+  footer{background:var(--panel);border-top:1px solid var(--line);padding:36px 0;font-size:13px;color:var(--faint)}
+  footer .wide{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  footer .spacer{flex:1}
+  footer a{color:var(--sub)}footer a:hover{color:var(--ink)}
+
+  @media(max-width:820px){
+    section{padding:84px 0}.hero{padding:60px 0 0}
+    .rust .split,.native .split{grid-template-columns:1fr;gap:36px}
+    .rust .txt,.native .txt{text-align:center}.rust .txt .sec-eyebrow,.native .txt .sec-eyebrow{text-align:center}
+    .rust .shot,.native .shot{order:-1}
+    .dlcards{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="wide">
+  <a class="brand" href="#top"><img src="assets/otter.png" alt="OtterZip"><span class="wm">OtterZip</span></a>
+  <div class="spacer"></div>
+  <div class="langpick">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.8 4 5.7 4 9s-1.5 6.2-4 9c-2.5-2.8-4-5.7-4-9s1.5-6.2 4-9z"/></svg>
+    <select id="langsel" aria-label="Language"></select>
+    <svg class="chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+  <a class="btn btn-fill" href="#download" data-i18n="nav.download">Download free</a>
+</div></nav>
+
+<header class="hero" id="top"><div class="wrap">
+  <h1 class="hero-title reveal" data-i18n="hero.title">Zip. <span class="grad">Done.</span></h1>
+  <p class="hero-sub reveal" data-i18n="hero.sub">Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.</p>
+  <div class="hero-cta reveal">
+    <a class="btn btn-fill" href="#download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span data-i18n="hero.cta_free">Download free</span></a>
+    <a class="btn-link" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+      <span data-i18n="hero.cta_store">Get it on the Store</span>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+  </div>
+  <p class="hero-by reveal">by LumiBear Studio</p>
+</div></header>
+
+<!-- 1. THE CLICK -->
+<section class="theclick"><div class="wrap sec-head">
+  <div class="sec-eyebrow reveal" data-i18n="click.eyebrow">One click</div>
+  <h2 class="reveal" data-i18n="click.title">This is the whole thing.</h2>
+  <p class="sec-body reveal" data-i18n="click.body">Right-click, pick one line, and the archive appears right where you were. The same click on an archive extracts it.</p>
+  <div class="clickdemo reveal" id="clickdemo"><div class="scene">
+    <div class="demo-file">
+      <div class="ic"><svg viewBox="0 0 60 74"><path d="M6 2h34l14 14v54a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#3a4a63"/><path d="M40 2l14 14H42a2 2 0 0 1-2-2z" fill="#556a8f"/><rect x="14" y="34" width="32" height="4" rx="2" fill="#8fa4c4"/><rect x="14" y="44" width="24" height="4" rx="2" fill="#7488a8"/></svg></div>
+      <div class="nm">Reports</div>
+    </div>
+    <div class="demo-menu">
+      <div class="demo-item"><img src="assets/otter.png" alt=""><span data-i18n="click.mi1">Compress with OtterZip…</span></div>
+      <div class="demo-item hot"><img src="assets/otter.png" alt=""><span data-i18n="click.mi2">Compress to Reports.zip</span></div>
+      <div class="demo-item"><img src="assets/otter.png" alt=""><span data-i18n="click.mi3">Compress to Reports.7z</span></div>
+    </div>
+    <div class="demo-zip">
+      <div class="ic"><svg viewBox="0 0 60 74"><path d="M6 2h34l14 14v54a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2z" fill="#123b3e"/><path d="M40 2l14 14H42a2 2 0 0 1-2-2z" fill="#1f5a5e"/><rect x="27" y="10" width="6" height="6" fill="#9df0e6"/><rect x="27" y="20" width="6" height="6" fill="#9df0e6"/><rect x="27" y="30" width="6" height="6" fill="#9df0e6"/><rect x="25" y="40" width="10" height="12" rx="2" fill="#3fd6e0"/></svg></div>
+      <div class="nm"><svg viewBox="0 0 24 24" fill="none" stroke="#9df0e6" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>Reports.zip</div>
+    </div>
+    <div class="demo-ripple"></div>
+    <svg class="demo-cursor" viewBox="0 0 24 24"><path d="M4 2l16 8-7 2-2 7z" fill="#fff" stroke="#000" stroke-width="1"/></svg>
+  </div></div>
+</div></section>
+
+<!-- 2. SIMPLE -->
+<section class="simple"><div class="wrap sec-head">
+  <div class="sec-eyebrow reveal" data-i18n="simple.eyebrow">Simple</div>
+  <h2 class="reveal" data-i18n="simple.title">One thing, done well.</h2>
+  <p class="sec-body reveal" data-i18n="simple.body">No modes, no clutter, no learning curve. When you do open the window, everything is already where you'd expect.</p>
+  <div class="shot reveal"><div class="frame"><img src="assets/window.png" alt="OtterZip main window"></div>
+    <p class="cap" data-i18n="simple.cap">the window you'll rarely see</p></div>
+</div></section>
+
+<!-- 3. NO ADS -->
+<section class="dark"><div class="wrap">
+  <h2 class="reveal" data-i18n="wedge.title">No ads.<br>No accounts.<br>No tracking.</h2>
+  <p class="sec-body reveal" data-i18n="wedge.body">No bundles, no nagging, nothing to sign up for. It compresses and extracts, then gets out of your way. Crash reports are strictly opt-in.</p>
+</div></section>
+
+<!-- 4. RUST -->
+<section class="rust"><div class="split wide">
+  <div class="txt reveal">
+    <div class="sec-eyebrow" data-i18n="rust.eyebrow">Speed</div>
+    <h2 data-i18n="rust.title">A native core, quietly fast.</h2>
+    <p class="sec-body" data-i18n="rust.body">The engine is written in Rust — native code that does the work and doesn't leave you waiting.</p>
+  </div>
+  <div class="shot reveal"><div class="speed" id="speedbar">
+    <div class="row"><span class="lbl" data-i18n="rust.compress">Compress</span><span class="track"><span class="fill"></span></span><span class="done">✓</span></div>
+    <div class="row"><span class="lbl" data-i18n="rust.extract">Extract</span><span class="track"><span class="fill" style="transition-delay:.15s"></span></span><span class="done">✓</span></div>
+  </div></div>
+</div></section>
+
+<!-- 5. NATIVE UI -->
+<section class="native"><div class="split wide">
+  <div class="shot reveal"><div class="twoup">
+    <div class="frame"><img src="assets/window.png" alt="OtterZip window"></div>
+    <div class="frame"><img src="assets/settings.png" alt="OtterZip settings"></div>
+  </div></div>
+  <div class="txt reveal">
+    <div class="sec-eyebrow" data-i18n="native.eyebrow">Native UI</div>
+    <h2 data-i18n="native.title">Looks like Windows, because it is.</h2>
+    <p class="sec-body" data-i18n="native.body">Built with C# and WinUI — a real native interface, not a web page in a window. Fluent design, light or dark, ten languages.</p>
+  </div>
+</div></section>
+
+<!-- 6. FORMATS -->
+<section class="formats"><div class="wrap sec-head reveal">
+  <div class="sec-eyebrow" data-i18n="fmt.eyebrow">Formats</div>
+  <h2 data-i18n="fmt.title">Opens just about anything.</h2>
+  <div class="chips">
+    <span class="chip">ZIP</span><span class="chip">7z</span><span class="chip">RAR</span><span class="chip">TAR</span><span class="chip">TAR.GZ</span>
+    <span class="chip">GZ</span><span class="chip">BZ2</span><span class="chip">XZ</span><span class="chip">ZST</span><span class="chip">ISO</span><span class="chip">CAB</span>
+  </div>
+  <p class="extra" data-i18n="fmt.body">ZIP, 7z, RAR, TAR and more — with AES-256 and split archives when you need them.</p>
+</div></section>
+
+<!-- 7. DOWNLOAD -->
+<section class="download" id="download"><div class="wrap sec-head reveal">
+  <div class="sec-eyebrow" data-i18n="dl.eyebrow">How to get it</div>
+  <h2 data-i18n="dl.title">Free, or support us.</h2>
+  <p class="sec-body" data-i18n="dl.body">The free download and the Store version are the exact same app. Pick whichever suits you.</p>
+</div>
+<div class="dlcards reveal">
+  <div class="dlcard free">
+    <div class="kick"><h3 data-i18n="dl.free_title">Free download</h3><span class="badge f" data-i18n="dl.free_tag">Free</span></div>
+    <p class="d" data-i18n="dl.free_body">Download straight from here. No ads, no account, nothing to sign up for.</p>
+    <div class="btnrow"><a class="btn btn-fill" data-dl href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span data-i18n="dl.free_btn">Get it free</span></a></div>
+    <p class="foot" data-i18n="dl.free_foot">Windows 11 · MSIX installer · auto-updates</p>
+  </div>
+  <div class="dlcard">
+    <div class="kick"><h3>Microsoft Store</h3><span class="badge p">US$3</span></div>
+    <p class="d" data-i18n="dl.store_body">Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.</p>
+    <div class="btnrow"><a class="btn btn-soft" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener"><span data-i18n="dl.store_btn">Get it from the Microsoft Store</span></a></div>
+    <p class="foot" data-i18n="dl.store_foot">Supports development · thank you</p>
+  </div>
+</div>
+<p class="dlnote reveal" data-i18n="dl.note">Both versions are identical and built from the same source.</p>
+</section>
+
+<footer><div class="wide">
+  <div class="brand"><img src="assets/otter.png" alt="" style="width:24px;height:24px;border-radius:6px"><span class="wm" style="font-size:16px">OtterZip</span></div>
+  <div class="spacer"></div>
+  <a href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" data-store target="_blank" rel="noopener">Microsoft Store</a>
+  <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
+  <span>&copy; 2026 LumiBear Studio</span>
+</div></footer>
+
+<script>
+var I18N = {
+  en: {
+    "meta.title":"OtterZip — the quiet archive tool for Windows",
+    "nav.download":"Download free",
+    "hero.title":"Zip. <span class=\"grad\">Done.</span>",
+    "hero.sub":"Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.",
+    "hero.cta_free":"Download free","hero.cta_store":"Get it on the Store",
+    "click.eyebrow":"One click","click.title":"This is the whole thing.",
+    "click.body":"Right-click, pick one line, and the archive appears right where you were. The same click on an archive extracts it.",
+    "click.mi1":"Compress with OtterZip…","click.mi2":"Compress to Reports.zip","click.mi3":"Compress to Reports.7z",
+    "simple.eyebrow":"Simple","simple.title":"One thing, done well.",
+    "simple.body":"No modes, no clutter, no learning curve. When you do open the window, everything is already where you'd expect.",
+    "simple.cap":"the window you'll rarely see",
+    "wedge.title":"No ads.<br>No accounts.<br>No tracking.",
+    "wedge.body":"No bundles, no nagging, nothing to sign up for. It compresses and extracts, then gets out of your way. Crash reports are strictly opt-in.",
+    "rust.eyebrow":"Speed","rust.title":"A native core, quietly fast.",
+    "rust.body":"The engine is written in Rust — native code that does the work and doesn't leave you waiting.",
+    "rust.compress":"Compress","rust.extract":"Extract",
+    "native.eyebrow":"Native UI","native.title":"Looks like Windows, because it is.",
+    "native.body":"Built with C# and WinUI — a real native interface, not a web page in a window. Fluent design, light or dark, ten languages.",
+    "fmt.eyebrow":"Formats","fmt.title":"Opens just about anything.",
+    "fmt.body":"ZIP, 7z, RAR, TAR and more — with AES-256 and split archives when you need them.",
+    "dl.eyebrow":"How to get it","dl.title":"Free, or support us.",
+    "dl.body":"The free download and the Store version are the exact same app. Pick whichever suits you.",
+    "dl.free_title":"Free download","dl.free_tag":"Free",
+    "dl.free_body":"Download straight from here. No ads, no account, nothing to sign up for.",
+    "dl.free_btn":"Get it free","dl.free_foot":"Windows 11 · MSIX installer · auto-updates",
+    "dl.store_body":"Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.",
+    "dl.store_btn":"Get it from the Microsoft Store","dl.store_foot":"Supports development · thank you",
+    "dl.note":"Both versions are identical and built from the same source.",
+    "footer.privacy":"Privacy"
+  },
+  ko: {
+    "meta.title":"OtterZip — 조용한 Windows 압축 도구",
+    "nav.download":"무료 다운로드",
+    "hero.title":"압축은 <span class=\"grad\">간단하게.</span>",
+    "hero.sub":"파일을 우클릭하면 압축, 아카이브를 우클릭하면 풀기. 앱을 열 일이 거의 없어요.",
+    "hero.cta_free":"무료 다운로드","hero.cta_store":"스토어에서 받기",
+    "click.eyebrow":"클릭 한 번","click.title":"이게 전부예요.",
+    "click.body":"우클릭하고 한 줄만 고르면 아카이브가 그 자리에 생겨요. 아카이브에 같은 우클릭이면 풀리고요.",
+    "click.mi1":"OtterZip으로 압축…","click.mi2":"Reports.zip로 압축","click.mi3":"Reports.7z로 압축",
+    "simple.eyebrow":"심플","simple.title":"하나만, 제대로.",
+    "simple.body":"모드도, 잡동사니도, 배울 것도 없어요. 창을 열어도 모든 게 예상한 자리에 있어요.",
+    "simple.cap":"거의 볼 일 없는 창",
+    "wedge.title":"광고 없음.<br>계정 없음.<br>추적 없음.",
+    "wedge.body":"번들도, 잔소리도, 가입도 없어요. 압축하고 풀고, 곧바로 비켜서요. 오류 보고는 철저히 선택이에요.",
+    "rust.eyebrow":"속도","rust.title":"네이티브 코어로, 조용히 빠르게.",
+    "rust.body":"엔진은 Rust로 만든 네이티브 코드. 할 일을 빠르게 끝내고, 기다리게 하지 않아요.",
+    "rust.compress":"압축","rust.extract":"해제",
+    "native.eyebrow":"네이티브 UI","native.title":"Windows 그대로의 모습.",
+    "native.body":"C#과 WinUI로 만든 진짜 네이티브 인터페이스예요. 창 속 웹페이지가 아니라, Fluent 디자인에 라이트도 다크도 열 개 언어도 자연스럽게 어울려요.",
+    "fmt.eyebrow":"지원 포맷","fmt.title":"웬만한 건 다 열려요.",
+    "fmt.body":"ZIP·7z·RAR·TAR 등 여러 포맷 — 필요하면 AES-256 암호화와 분할 압축까지.",
+    "dl.eyebrow":"받는 방법","dl.title":"무료로, 또는 후원으로.",
+    "dl.body":"무료 다운로드와 스토어 버전은 완전히 같은 앱이에요. 편한 쪽으로 받으세요.",
+    "dl.free_title":"무료 다운로드","dl.free_tag":"무료",
+    "dl.free_body":"홈페이지에서 바로 받기. 광고도, 계정도, 가입도 없어요.",
+    "dl.free_btn":"무료로 받기","dl.free_foot":"Windows 11 · MSIX 설치 · 자동 업데이트",
+    "dl.store_body":"앱은 완전히 동일해요. 스토어 구매는 순수하게 개발을 후원하는 방법입니다. 업데이트는 스토어로 자동 전달돼요.",
+    "dl.store_btn":"Microsoft Store에서 받기","dl.store_foot":"개발 후원 · 감사합니다",
+    "dl.note":"두 버전은 같은 소스로 만든 동일한 앱이에요.",
+    "footer.privacy":"개인정보"
+  }
+};
+var LANG_NAMES = {en:"English",ko:"한국어"};
+var OZ_DOWNLOAD_URL = "#";
+
+function applyLang(l){
+  var d=I18N[l]||I18N.en,en=I18N.en,els=document.querySelectorAll("[data-i18n]"),i,k,v;
+  for(i=0;i<els.length;i++){k=els[i].getAttribute("data-i18n");v=(k in d)?d[k]:en[k];if(v!=null)els[i].innerHTML=v;}
+  document.title=d["meta.title"]||en["meta.title"];document.documentElement.lang=l;
+  var s=document.getElementById("langsel");if(s)s.value=l;
+  try{localStorage.setItem("oz-lang",l);}catch(e){}
+}
+function buildPicker(){var s=document.getElementById("langsel");if(!s)return;s.innerHTML="";
+  Object.keys(LANG_NAMES).forEach(function(c){if(!I18N[c])return;var o=document.createElement("option");o.value=c;o.textContent=LANG_NAMES[c];s.appendChild(o);});
+  s.onchange=function(){applyLang(s.value);};}
+function detectLang(){try{var s=localStorage.getItem("oz-lang");if(s&&I18N[s])return s;}catch(e){}
+  var L=navigator.languages||[navigator.language||"en"],i,l;for(i=0;i<L.length;i++){l=(L[i]||"").toLowerCase();if(l.split("-")[0]==="ko"&&I18N.ko)return "ko";}return "en";}
+
+function initReveal(){
+  var els=document.querySelectorAll(".reveal");
+  if(!("IntersectionObserver" in window)){for(var i=0;i<els.length;i++)els[i].classList.add("in");document.getElementById("clickdemo").classList.add("play");document.getElementById("speedbar").classList.add("go");return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{rootMargin:"0px 0px -8% 0px",threshold:.08});
+  els.forEach(function(el){io.observe(el);});
+  // start the click demo + speed bars when they scroll in
+  var d=document.getElementById("clickdemo"), sb=document.getElementById("speedbar");
+  var io2=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add(e.target.id==="speedbar"?"go":"play");}else{if(e.target.id==="speedbar")e.target.classList.remove("go");}});},{threshold:.4});
+  if(d)io2.observe(d); if(sb)io2.observe(sb);
+}
+
+(function(){
+  buildPicker();applyLang(detectLang());
+  var isWin=(navigator.userAgentData&&navigator.userAgentData.platform==="Windows")||/Windows NT/.test(navigator.userAgent||"");
+  if(isWin){var st=document.querySelectorAll("a[data-store]");for(var j=0;j<st.length;j++){st[j].setAttribute("href","ms-windows-store://pdp/?productid=9NWQNGGSWJCL");st[j].removeAttribute("target");st[j].removeAttribute("rel");}}
+  if(OZ_DOWNLOAD_URL&&OZ_DOWNLOAD_URL!=="#"){var dl=document.querySelectorAll("a[data-dl]");for(var i=0;i<dl.length;i++)dl[i].setAttribute("href",OZ_DOWNLOAD_URL);}
+  if(document.readyState!=="loading")initReveal();else document.addEventListener("DOMContentLoaded",initReveal);
+})();
+</script>
+</body>
+</html>
