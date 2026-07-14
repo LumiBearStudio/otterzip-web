@@ -4,159 +4,153 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
 <title>OtterZip — the quiet archive tool for Windows</title>
-<meta name="description" content="A quiet, no-clutter archive tool for Windows. Compress and extract right from Explorer — ZIP, 7z, RAR, TAR and more, with AES-256 encryption and split archives. Free, no ads, no accounts, no tracking.">
-<meta property="og:title" content="OtterZip — Zip. Done.">
-<meta property="og:description" content="A quiet, no-clutter archive tool for Windows. Right-click to compress or extract. Free · no ads · no accounts · no tracking.">
-<meta property="og:type" content="website">
 <link rel="icon" href="assets/otter.png">
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
     --bg:#000000; --panel:#111114; --card:#1a1a1d; --ink:#f5f5f7; --sub:#a1a1a6; --faint:#6e6e73;
-    --line:rgba(255,255,255,.12); --accent:#4d7cff; --accent2:#3fd6e0; --ink-dark:#f5f5f7;
-    --maxw:1000px; --wide:1180px;
-    --ease:cubic-bezier(.16,1,.3,1);
+    --line:rgba(255,255,255,.12); --accent:#4d7cff; --accent2:#3fd6e0; --wide:1180px; --ease:cubic-bezier(.16,1,.3,1);
+    --accent-hover:#6b91ff; --accent2-text:#9df0e6; --maxw:900px;
+    --nav-bg:rgba(0,0,0,.72); --nav-border:rgba(255,255,255,.10);
   }
   html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
-  body{
-    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","SF Pro Text","Segoe UI Variable Display","Segoe UI",system-ui,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
-    color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;
-    text-rendering:optimizeLegibility;overflow-x:hidden;
-    word-break:keep-all;overflow-wrap:break-word;
-  }
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI Variable Display","Segoe UI",system-ui,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    color:var(--ink);background:var(--bg);line-height:1.5;-webkit-font-smoothing:antialiased;overflow-x:hidden;word-break:keep-all;overflow-wrap:break-word}
   a{color:inherit;text-decoration:none}
   img{max-width:100%;height:auto;display:block}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
   .wide{max-width:var(--wide);margin:0 auto;padding:0 24px}
-  .grad{background:linear-gradient(96deg,#6ea0ff,#3fe0ea);-webkit-background-clip:text;background-clip:text;color:transparent}
-
-  /* reveal on scroll (Apple-style) */
+  .grad{background:linear-gradient(96deg,var(--accent-hover),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
   @media (prefers-reduced-motion:no-preference){
     .reveal{opacity:0;transform:translateY(30px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
     .reveal.in{opacity:1;transform:none}
   }
-
-  /* buttons */
-  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:980px;font-weight:600;
-    font-size:17px;padding:12px 24px;transition:transform .18s var(--ease),background .18s,opacity .18s;white-space:nowrap;cursor:pointer;line-height:1.2}
+  .btn{display:inline-flex;align-items:center;gap:9px;border-radius:980px;font-weight:600;font-size:17px;padding:12px 24px;transition:transform .18s var(--ease),background .18s;white-space:nowrap;cursor:pointer;line-height:1.2}
   .btn:active{transform:scale(.97)}
-  .btn-fill{background:var(--accent);color:#fff}
-  .btn-fill:hover{background:#6b91ff}
-  .btn-soft{background:rgba(255,255,255,.10);color:var(--ink)}
-  .btn-soft:hover{background:rgba(255,255,255,.16)}
+  .btn-fill{background:var(--accent);color:#fff}.btn-fill:hover{background:var(--accent-hover)}
+  .btn-soft{background:rgba(255,255,255,.10);color:var(--ink)}.btn-soft:hover{background:rgba(255,255,255,.16)}
   .btn-link{color:var(--accent);font-size:17px;font-weight:500;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   .btn-link:hover{text-decoration:underline}
-  .btn svg{width:19px;height:19px}
-  .on-dark .btn-soft{background:rgba(255,255,255,.14);color:#fff}
-  .on-dark .btn-soft:hover{background:rgba(255,255,255,.22)}
+  .btn svg,.btn-link svg{width:19px;height:19px}
+  .store-btn{display:inline-flex;align-items:center;gap:11px;background:rgba(255,255,255,.10);color:var(--ink);border:1px solid var(--line);border-radius:980px;padding:8px 20px;transition:background .18s var(--ease),transform .18s var(--ease);white-space:nowrap;cursor:pointer}
+  .store-btn:hover{background:rgba(255,255,255,.16)}
+  .store-btn:active{transform:scale(.97)}
+  .store-btn .win{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:19px;height:19px;flex:none}
+  .store-btn .win i{background:currentColor;border-radius:1px}
+  .store-btn .stxt{display:flex;flex-direction:column;line-height:1.08;text-align:left}
+  .store-btn .stxt small{font-size:10px;font-weight:400;opacity:.72}
+  .store-btn .stxt b{font-size:15px;font-weight:600}
 
-  /* nav */
-  nav{position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-    background:rgba(0,0,0,.72);border-bottom:1px solid rgba(255,255,255,.10)}
+  nav{position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:var(--nav-bg);border-bottom:1px solid var(--nav-border);transition:border-color .3s}
   nav .wide{display:flex;align-items:center;height:52px;gap:16px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .brand img{width:29px;height:29px;border-radius:8px}
+  .brand{display:flex;align-items:center;gap:10px}.brand img{width:29px;height:29px;border-radius:8px}
   .brand .wm{font-size:19px;font-weight:700;letter-spacing:-.3px}
   nav .spacer{flex:1}
   .langpick{position:relative;display:inline-flex;align-items:center}
   .langpick svg{width:16px;height:16px;position:absolute;left:9px;pointer-events:none;color:var(--sub)}
-  #langsel{-webkit-appearance:none;appearance:none;background:transparent;border:1px solid var(--line);
-    border-radius:980px;color:var(--ink);font:inherit;font-size:13px;font-weight:500;
-    padding:6px 26px 6px 30px;cursor:pointer}
+  #langsel{-webkit-appearance:none;appearance:none;background:transparent;border:1px solid var(--line);border-radius:980px;color:var(--ink);font:inherit;font-size:13px;font-weight:500;padding:6px 26px 6px 30px;cursor:pointer}
   .langpick .chev{left:auto;right:9px}
   nav .btn{font-size:14px;padding:7px 16px}
 
-  /* hero */
-  .hero{text-align:center;padding:88px 0 0}
-  .eyebrow{font-size:19px;font-weight:600;color:var(--accent);letter-spacing:.01em;margin-bottom:10px}
+  .hero{text-align:center;padding:96px 0 0;position:relative}
+  .hero::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:680px;height:340px;background:radial-gradient(ellipse at center,rgba(77,124,255,.12) 0%,transparent 70%);pointer-events:none;z-index:-1}
+  .eyebrow{font-size:19px;font-weight:600;color:var(--accent);margin-bottom:10px}
   .hero-title{font-size:clamp(52px,9vw,104px);line-height:1;font-weight:700;letter-spacing:-.03em;margin-bottom:20px}
-  .hero-sub{font-size:clamp(20px,2.6vw,27px);line-height:1.35;color:var(--sub);max-width:640px;margin:0 auto 30px;font-weight:400}
-  .hero-cta{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-  .hero-by{font-size:14px;color:var(--faint);margin-top:14px}
-  .hero-shot{max-width:var(--wide);margin:60px auto 0;padding:0 24px}
-  .hero-shot .frame{position:relative;border-radius:20px;overflow:hidden;
-    box-shadow:0 30px 90px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.10)}
-  .hero-shot img{width:100%;display:block}
+  .hero-sub{font-size:clamp(19px,2.5vw,26px);line-height:1.45;color:var(--sub);max-width:580px;margin:0 auto 30px}
+  .hero-cta{display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap}
+  .hero-by{font-size:14px;color:var(--faint);margin-top:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+  .hero-by img{width:18px;height:18px;border-radius:4px;opacity:.7}
 
-  /* generic section */
   section{padding:120px 0}
   .sec-head{text-align:center;max-width:720px;margin:0 auto}
-  .sec-eyebrow{font-size:15px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px}
-  h2{font-size:clamp(32px,5.2vw,56px);line-height:1.07;font-weight:700;letter-spacing:-.02em}
-  .sec-body{font-size:clamp(18px,2.2vw,21px);line-height:1.45;color:var(--sub);margin-top:18px}
+  .sec-eyebrow{font-size:17px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--accent2);margin-bottom:16px}
+  h2{font-size:clamp(32px,5.2vw,54px);line-height:1.08;font-weight:700;letter-spacing:-.02em}
+  .sec-body{font-size:clamp(18px,2.1vw,21px);line-height:1.55;color:var(--sub);margin-top:18px}
 
-  /* dark statement (full-bleed) */
-  .dark{background:radial-gradient(760px 420px at 50% 26%,rgba(77,124,255,.18),transparent 60%),#000;color:var(--ink-dark);text-align:center}
-  .dark h2{font-size:clamp(40px,7vw,80px);letter-spacing:-.03em;color:#fff}
-  .dark .sec-body{color:#a1a1a6;max-width:620px;margin:22px auto 0}
 
-  /* explorer split */
-  .split{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;max-width:var(--wide)}
-  .split .txt h2{font-size:clamp(30px,4.4vw,46px)}
-  .split .txt .sec-eyebrow{text-align:left}
-  .menuwrap{display:flex;justify-content:center;position:relative}
-  .menuwrap .halo{position:absolute;inset:6% 10%;background:radial-gradient(circle,rgba(47,106,224,.14),transparent 66%);filter:blur(30px);z-index:0}
-  .folder{display:flex;flex-direction:column;align-items:center;gap:8px;margin-right:-26px;align-self:flex-start;margin-top:30px;position:relative;z-index:1}
-  .folder svg{width:80px;height:68px;filter:drop-shadow(0 12px 22px rgba(0,0,0,.16))}
-  .folder .nm{font-size:14px;background:rgba(77,124,255,.18);border:1px solid rgba(77,124,255,.4);color:#8fb0ff;padding:2px 12px;border-radius:6px}
-  .menu{background:#2b2b2b;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:6px;
-    box-shadow:0 30px 70px rgba(0,0,0,.30);align-self:flex-start;margin-top:10px;position:relative;z-index:1}
-  .mi{display:flex;align-items:center;gap:12px;height:46px;padding:0 24px 0 12px;border-radius:7px;white-space:nowrap}
-  .mi img{width:24px;height:24px}
-  .mi .lbl{font-size:16px;color:#f2f3f5}
-  .mi.hot{background:rgba(255,255,255,.10)}
 
-  /* features grid */
-  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:64px;max-width:var(--wide)}
-  .fcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:32px}
-  .fcard .ic{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;
-    background:linear-gradient(140deg,rgba(47,106,224,.12),rgba(31,154,168,.12));color:var(--accent)}
-  .fcard .ic svg{width:27px;height:27px}
-  .fcard h3{font-size:21px;font-weight:600;margin-bottom:9px;letter-spacing:-.01em}
-  .fcard p{font-size:16px;color:var(--sub);line-height:1.5}
+  /* ---- section dividers ---- */
+  .sec-fade-in{height:80px;background:linear-gradient(to bottom,var(--bg),var(--panel))}
+  .sec-fade-out{height:80px;background:linear-gradient(to bottom,var(--panel),var(--bg))}
 
-  /* formats */
-  .formats{background:var(--panel)}
-  .chips{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;max-width:760px;margin:44px auto 0}
-  .chip{font-size:15px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:9px 16px;border-radius:12px}
+  /* ---- simple: window in whitespace ---- */
+  .simple{background:var(--panel)}
+  .simple .shot{max-width:560px;margin:48px auto 0}
+  .simple .frame{border-radius:18px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.55);border:1px solid var(--line);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .simple .frame:hover{transform:translateY(-4px);box-shadow:0 32px 80px rgba(0,0,0,.65)}
 
-  /* tune */
-  .tune .split{align-items:center}
-  .tune .shot .frame{border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.10)}
+  /* ---- no-ads wedge ---- */
+  .dark{background:radial-gradient(760px 420px at 50% 30%,rgba(77,124,255,.18),transparent 60%),var(--bg);color:var(--ink);text-align:center}
+  .dark h2{font-size:clamp(40px,7vw,78px);letter-spacing:-.03em;color:#fff}
+  .dark .sec-body{color:var(--sub);max-width:640px;margin:22px auto 0}
 
-  /* download */
-  .dlcards{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;margin:56px auto 0;align-items:stretch}
-  .dlcard{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:36px 34px;display:flex;flex-direction:column;text-align:left}
+  /* ---- rust: speed motif ---- */
+  .rust .split,.native .split{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:center;max-width:var(--wide)}
+  .rust .txt .sec-eyebrow,.native .txt .sec-eyebrow{text-align:left}
+  .rust .txt h2,.native .txt h2{font-size:clamp(30px,4.4vw,46px)}
+  .speed{background:var(--card);border:1px solid var(--line);border-radius:20px;padding:30px}
+  .speed .row{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+  .speed .row:last-child{margin-bottom:0}
+  .speed .lbl{font-size:14px;color:var(--sub);width:74px;flex:none}
+  .speed .track{flex:1;height:10px;border-radius:6px;background:rgba(255,255,255,.08);overflow:hidden}
+  .speed .fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));width:0;position:relative;overflow:hidden}
+  .speed .fill::after{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.25),transparent);animation:none}
+  .speed .done{font-size:13px;color:var(--accent2-text);width:52px;flex:none;text-align:right;opacity:0;transition:opacity .3s .5s}
+  @media (prefers-reduced-motion:no-preference){
+    .speed.go .fill{transition:width 1.1s var(--ease)}
+    .speed.go .fill{width:100%}
+    .speed.go .fill::after{animation:shimmer 1.5s .8s ease-out forwards}
+    .speed.go .done{animation:popIn .3s 1.2s var(--ease) both}
+  }
+  @media (prefers-reduced-motion:reduce){ .speed .fill{width:100%} .speed .done{opacity:1} }
+  .speed.go .done{opacity:1}
+  @keyframes shimmer{0%{left:-100%}100%{left:200%}}
+  @keyframes popIn{0%{opacity:0;transform:scale(0)}60%{transform:scale(1.3)}100%{opacity:1;transform:scale(1)}}
+
+  /* ---- native: two-up ---- */
+  .twoup{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;align-items:end}
+  .twoup .frame{border-radius:16px;overflow:hidden;box-shadow:0 20px 50px rgba(0,0,0,.5);border:1px solid var(--line);transition:transform .3s var(--ease),box-shadow .3s var(--ease)}
+  .twoup .frame:hover{transform:translateY(-4px);box-shadow:0 28px 60px rgba(0,0,0,.6)}
+
+  /* ---- formats strip ---- */
+  .formats{background:var(--panel);text-align:center}
+  .chips{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;max-width:760px;margin:34px auto 14px}
+  .chip{font-size:14.5px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:8px 15px;border-radius:11px;transition:transform .15s var(--ease),border-color .2s,background .2s,box-shadow .2s;cursor:default}
+  .chip:hover{transform:translateY(-2px);border-color:var(--accent);background:rgba(77,124,255,.06);box-shadow:0 4px 12px rgba(77,124,255,.1)}
+  .formats .extra{font-size:15px;color:var(--faint)}
+
+  /* ---- download ---- */
+  .dlcards{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:880px;margin:52px auto 0;align-items:stretch}
+  .dlcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:34px 32px;display:flex;flex-direction:column;text-align:left;transition:transform .25s var(--ease),box-shadow .25s var(--ease)}
+  .dlcard:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(0,0,0,.5)}
   .dlcard.free{border-color:rgba(63,214,224,.5);box-shadow:0 0 0 1px rgba(63,214,224,.14),0 20px 50px rgba(0,0,0,.4)}
+  .dlcard.free:hover{box-shadow:0 0 0 1px rgba(63,214,224,.2),0 28px 70px rgba(63,214,224,.12)}
   .dlcard .kick{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-  .dlcard h3{font-size:25px;font-weight:700;letter-spacing:-.01em}
+  .dlcard h3{font-size:24px;font-weight:700}
   .dlcard .badge{font-size:14px;font-weight:700;padding:3px 11px;border-radius:980px}
-  .dlcard .badge.f{color:#4fd6c4;background:rgba(63,214,224,.14);border:1px solid rgba(63,214,224,.35)}
-  .dlcard .badge.p{color:var(--accent);background:rgba(47,106,224,.1);border:1px solid rgba(47,106,224,.28)}
-  .dlcard p.d{font-size:16px;color:var(--sub);margin:10px 0 26px;line-height:1.5}
-  .dlcard .btnrow{margin-top:auto}
-  .dlcard .btn{width:100%;justify-content:center}
-  .dlcard .foot{font-size:13px;color:var(--faint);margin-top:14px}
-  .dlnote{max-width:720px;margin:30px auto 0;text-align:center;font-size:14px;color:var(--faint);line-height:1.6}
+  .dlcard .badge.f{color:var(--accent2-text);background:rgba(63,214,224,.14);border:1px solid rgba(63,214,224,.35)}
+  .dlcard .badge.p{color:var(--accent);background:rgba(77,124,255,.12);border:1px solid rgba(77,124,255,.3)}
+  .dlcard p.d{font-size:15.5px;color:var(--sub);margin:8px 0 24px;line-height:1.5}
+  .dlcard .btnrow{margin-top:auto}.dlcard .btn{width:100%;justify-content:center}
+  .dlcard .foot{font-size:13px;color:var(--faint);margin-top:13px}
+  .dlnote{max-width:700px;margin:26px auto 0;text-align:center;font-size:14px;color:var(--faint)}
 
-  /* footer */
   footer{background:var(--panel);border-top:1px solid var(--line);padding:36px 0;font-size:13px;color:var(--faint)}
   footer .wide{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
   footer .spacer{flex:1}
-  footer a{color:var(--sub)} footer a:hover{color:var(--ink)}
-  footer .ft-tag{color:var(--faint)}
+  footer a{color:var(--sub)}footer a:hover{color:var(--ink)}
 
   @media(max-width:820px){
-    section{padding:84px 0}
-    .hero{padding:60px 0 0}
-    .split{grid-template-columns:1fr;gap:40px}
-    .split .txt{text-align:center}.split .txt .sec-eyebrow{text-align:center}
-    .tune .shot{order:-1}
-    .feat-grid{grid-template-columns:1fr;gap:16px}
+    section{padding:84px 0}.hero{padding:60px 0 0}
+    .hero::after{width:100%;height:200px}
+    .sec-fade-in,.sec-fade-out{height:48px}
+    .rust .split,.native .split{grid-template-columns:1fr;gap:36px}
+    .rust .txt,.native .txt{text-align:center}.rust .txt .sec-eyebrow,.native .txt .sec-eyebrow{text-align:center}
+    .rust .shot,.native .shot{order:-1}
     .dlcards{grid-template-columns:1fr}
-    .folder{margin-right:-18px}
-    nav .brand .wm{font-size:17px}
+    .twoup{grid-template-columns:1fr;gap:14px}
   }
 </style>
 </head>
@@ -173,342 +167,203 @@
   <a class="btn btn-fill" href="#download" data-i18n="nav.download">Download free</a>
 </div></nav>
 
-<header class="hero" id="top">
-  <div class="wrap">
-    <div class="eyebrow reveal" data-i18n="hero.eyebrow">For Windows 11</div>
-    <h1 class="hero-title reveal" data-i18n="hero.title">Zip. <span class="grad">Done.</span></h1>
-    <p class="hero-sub reveal" data-i18n="hero.sub">No ads, no bundles, no nagging. Just compress and extract — a simple archive tool for Windows.</p>
-    <div class="hero-cta reveal">
-      <a class="btn btn-fill" href="#download">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
-        <span data-i18n="hero.cta_free">Download free</span></a>
-      <a class="btn-link" href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener" data-store>
-        <span data-i18n="hero.cta_store">Get it on the Store</span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
-    </div>
-    <p class="hero-by reveal">by LumiBear Studio</p>
+<header class="hero" id="top"><div class="wrap">
+  <h1 class="hero-title reveal" data-i18n="hero.title">Zip. <span class="grad">Done.</span></h1>
+  <p class="hero-sub reveal" data-i18n="hero.sub">Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.</p>
+  <div class="hero-cta reveal">
+    <a class="btn btn-fill" href="#download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span data-i18n="hero.cta_free">Download free</span></a>
+    <a class="store-btn" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+      <span class="win"><i></i><i></i><i></i><i></i></span>
+      <span class="stxt"><small data-i18n="hero.store_small">Get it from</small><b>Microsoft Store</b></span></a>
   </div>
-  <div class="hero-shot reveal"><div class="frame"><img src="assets/window.png" alt="OtterZip main window"></div></div>
-</header>
+  <p class="hero-by reveal"><img src="assets/otter.png" alt="">by LumiBear Studio</p>
+</div></header>
 
-<section class="dark">
-  <div class="wrap">
-    <h2 class="reveal" data-i18n="wedge.title">No ads.<br>No accounts.<br>No tracking.</h2>
-    <p class="sec-body reveal" data-i18n="wedge.body">The archive tool that just compresses and extracts — then gets out of your way.</p>
-  </div>
-</section>
+<div class="sec-fade-in"></div>
 
-<section class="explorer">
-  <div class="split wide">
-    <div class="txt reveal">
-      <div class="sec-eyebrow" data-i18n="exp.eyebrow">Right from Explorer</div>
-      <h2 data-i18n="exp.title">You barely open the app.</h2>
-      <p class="sec-body" data-i18n="exp.body">Right-click a file to compress it. Right-click an archive to extract it. Most of the time, OtterZip works entirely from the menu you already use.</p>
-    </div>
-    <div class="menuwrap reveal">
-      <div class="halo"></div>
-      <div class="folder">
-        <svg viewBox="0 0 120 100"><defs><linearGradient id="fld" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8fb2e6"/><stop offset="1" stop-color="#5b83bd"/></linearGradient></defs>
-          <path d="M8 24 h34 l10 10 h52 a6 6 0 0 1 6 6 v46 a6 6 0 0 1 -6 6 H8 a6 6 0 0 1 -6 -6 V30 a6 6 0 0 1 6 -6 z" fill="#5c7fb8"/>
-          <path d="M6 40 h108 a4 4 0 0 1 4 4 v42 a6 6 0 0 1 -6 6 H8 a6 6 0 0 1 -6 -6 V44 a4 4 0 0 1 4 -4 z" fill="url(#fld)"/></svg>
-        <div class="nm">Reports</div>
-      </div>
-      <div class="menu">
-        <div class="mi hot"><img src="assets/otter.png" alt=""><span class="lbl" data-i18n="exp.mi1">Compress with OtterZip…</span></div>
-        <div class="mi"><img src="assets/otter.png" alt=""><span class="lbl" data-i18n="exp.mi2">Compress to Reports.7z</span></div>
-        <div class="mi"><img src="assets/otter.png" alt=""><span class="lbl" data-i18n="exp.mi3">Compress to Reports.zip</span></div>
-      </div>
-    </div>
-  </div>
-</section>
+<!-- 2. SIMPLE -->
+<section class="simple"><div class="wrap sec-head">
+  <div class="sec-eyebrow reveal" data-i18n="simple.eyebrow">Simple</div>
+  <h2 class="reveal" data-i18n="simple.title">One thing, done well.</h2>
+  <p class="sec-body reveal" data-i18n="simple.body">No modes, no clutter, no learning curve. When you do open the window, everything is already where you'd expect.</p>
+  <div class="shot reveal"><div class="frame"><img src="assets/window.png" alt="OtterZip main window"></div></div>
+</div></section>
 
-<section class="features" style="background:var(--panel)">
-  <div class="wrap sec-head reveal">
-    <div class="sec-eyebrow" data-i18n="feat.eyebrow">Everything you need</div>
-    <h2 data-i18n="feat.title">Small app. Full toolbox.</h2>
-  </div>
-  <div class="feat-grid wide" style="margin-left:auto;margin-right:auto">
-    <div class="fcard reveal">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></div>
-      <h3 data-i18n="f1.t">Every common format</h3>
-      <p data-i18n="f1.b">Create ZIP, 7z, TAR and TAR.GZ. Extract those plus RAR, GZ, BZ2, XZ, ISO and more.</p>
-    </div>
-    <div class="fcard reveal">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
-      <h3 data-i18n="f2.t">Encrypt &amp; split</h3>
-      <p data-i18n="f2.b">Lock archives with AES-256. Split large archives into multiple volumes.</p>
-    </div>
-    <div class="fcard reveal">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 4H8zM8 7h8v13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1z"/><path d="M12 11v5"/></svg></div>
-      <h3 data-i18n="f3.t">Right-click integration</h3>
-      <p data-i18n="f3.b">Compress and extract from the Explorer menu — no window to open first.</p>
-    </div>
-    <div class="fcard reveal">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
-      <h3 data-i18n="f4.t">Built for speed</h3>
-      <p data-i18n="f4.b">A native Rust core does the work — quickly, and out of your way.</p>
-    </div>
-    <div class="fcard reveal">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
-      <h3 data-i18n="f5.t">Private by default</h3>
-      <p data-i18n="f5.b">No ads. No accounts. No tracking. Crash reports are strictly opt-in.</p>
-    </div>
-    <div class="fcard reveal">
-      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/></svg></div>
-      <h3 data-i18n="f6.t">Yours to tune</h3>
-      <p data-i18n="f6.b">Light, dark, or follow system. Ten languages built in.</p>
-    </div>
-  </div>
-</section>
+<div class="sec-fade-out"></div>
 
-<section class="formats">
-  <div class="wrap sec-head reveal">
-    <div class="sec-eyebrow" data-i18n="fmt.eyebrow">Formats</div>
-    <h2 data-i18n="fmt.title">Opens just about anything.</h2>
-  </div>
-  <div class="chips reveal">
-    <span class="chip">ZIP</span><span class="chip">7z</span><span class="chip">RAR</span><span class="chip">TAR</span>
-    <span class="chip">TAR.GZ</span><span class="chip">TAR.BZ2</span><span class="chip">TAR.XZ</span><span class="chip">GZ</span>
-    <span class="chip">BZ2</span><span class="chip">XZ</span><span class="chip">ZST</span><span class="chip">LZ4</span>
-    <span class="chip">JAR</span><span class="chip">APK</span><span class="chip">IPA</span><span class="chip">ISO</span>
-    <span class="chip">IMG</span><span class="chip">CAB</span><span class="chip">DEB</span><span class="chip" data-i18n="fmt.more">&amp; more</span>
-  </div>
-</section>
+<!-- 3. NO ADS -->
+<section class="dark"><div class="wrap">
+  <h2 class="reveal" data-i18n="wedge.title">No ads.<br>No accounts.<br>No tracking.</h2>
+  <p class="sec-body reveal" data-i18n="wedge.body">No bundles, no nagging, nothing to sign up for. It compresses and extracts, then gets out of your way. Crash reports are strictly opt-in.</p>
+</div></section>
 
-<section class="tune">
-  <div class="split wide">
-    <div class="txt reveal">
-      <div class="sec-eyebrow" data-i18n="tune.eyebrow">Quietly yours</div>
-      <h2 data-i18n="tune.title">Sensible defaults, out of the box.</h2>
-      <p class="sec-body" data-i18n="tune.body">Theme, language, overwrite rules and more — tuned however you like. Ten languages, light and dark, and it stays out of the way until you need it.</p>
-    </div>
-    <div class="shot reveal"><div class="frame"><img src="assets/settings.png" alt="OtterZip settings"></div></div>
+<!-- 4. RUST -->
+<section class="rust"><div class="split wide">
+  <div class="txt reveal">
+    <div class="sec-eyebrow" data-i18n="rust.eyebrow">Speed</div>
+    <h2 data-i18n="rust.title">A native core, quietly fast.</h2>
+    <p class="sec-body" data-i18n="rust.body">The engine is written in Rust — native code that does the work and doesn't leave you waiting.</p>
   </div>
-</section>
+  <div class="shot reveal"><div class="speed" id="speedbar">
+    <div class="row"><span class="lbl" data-i18n="rust.compress">Compress</span><span class="track"><span class="fill"></span></span><span class="done">✓</span></div>
+    <div class="row"><span class="lbl" data-i18n="rust.extract">Extract</span><span class="track"><span class="fill" style="transition-delay:.15s"></span></span><span class="done">✓</span></div>
+  </div></div>
+</div></section>
 
-<section class="download" id="download" style="background:var(--panel)">
-  <div class="wrap sec-head reveal">
-    <div class="sec-eyebrow" data-i18n="dl.eyebrow">How to get it</div>
-    <h2 data-i18n="dl.title">Free, or support us.</h2>
-    <p class="sec-body" data-i18n="dl.body">The free download and the Store version are the exact same app. Pick whichever suits you.</p>
+<!-- 5. NATIVE UI -->
+<section class="native"><div class="split wide">
+  <div class="shot reveal"><div class="twoup">
+    <div class="frame"><img src="assets/window.png" alt="OtterZip window"></div>
+    <div class="frame"><img src="assets/settings.png" alt="OtterZip settings"></div>
+  </div></div>
+  <div class="txt reveal">
+    <div class="sec-eyebrow" data-i18n="native.eyebrow">Native UI</div>
+    <h2 data-i18n="native.title">Looks like Windows, because it is.</h2>
+    <p class="sec-body" data-i18n="native.body">Built with C# and WinUI — a real native interface, not a web page in a window. Fluent design, light or dark, ten languages.</p>
   </div>
-  <div class="dlcards reveal">
-    <div class="dlcard free">
-      <div class="kick">
-        <h3 data-i18n="dl.free_title">Free download</h3>
-        <span class="badge f" data-i18n="dl.free_tag">Free</span>
-      </div>
-      <p class="d" data-i18n="dl.free_body">Download straight from here. No ads, no account, nothing to sign up for.</p>
-      <div class="btnrow">
-        <a class="btn btn-fill" data-dl href="#">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
-          <span data-i18n="dl.free_btn">Get it free</span></a>
-      </div>
-      <p class="foot" data-i18n="dl.free_foot">Windows 11 · MSIX installer · auto-updates</p>
-    </div>
-    <div class="dlcard">
-      <div class="kick">
-        <h3>Microsoft Store</h3>
-        <span class="badge p">US$3</span>
-      </div>
-      <p class="d" data-i18n="dl.store_body">Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.</p>
-      <div class="btnrow">
-        <a class="btn btn-soft" href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener" data-store>
-          <span data-i18n="dl.store_btn">Get it from the Microsoft Store</span></a>
-      </div>
-      <p class="foot" data-i18n="dl.store_foot">Supports development · thank you</p>
-    </div>
+</div></section>
+
+<!-- 6. FORMATS -->
+<section class="formats"><div class="wrap sec-head reveal">
+  <div class="sec-eyebrow" data-i18n="fmt.eyebrow">Formats</div>
+  <h2 data-i18n="fmt.title">Opens just about anything.</h2>
+  <div class="chips">
+    <span class="chip">ZIP</span><span class="chip">7z</span><span class="chip">RAR</span><span class="chip">TAR</span><span class="chip">TAR.GZ</span>
+    <span class="chip">GZ</span><span class="chip">BZ2</span><span class="chip">XZ</span><span class="chip">ZST</span><span class="chip">ISO</span><span class="chip">CAB</span>
   </div>
-  <p class="dlnote reveal" data-i18n="dl.note">Both versions are identical and built from the same source. If your browser warns on first install, that's expected for a directly-downloaded app.</p>
+  <p class="extra" data-i18n="fmt.body">ZIP, 7z, RAR, TAR and more — with AES-256 and split archives when you need them.</p>
+</div></section>
+
+<!-- 7. DOWNLOAD -->
+<section class="download" id="download"><div class="wrap sec-head reveal">
+  <div class="sec-eyebrow" data-i18n="dl.eyebrow">How to get it</div>
+  <h2 data-i18n="dl.title">Free, or support us.</h2>
+  <p class="sec-body" data-i18n="dl.body">The free download and the Store version are the exact same app. Pick whichever suits you.</p>
+</div>
+<div class="dlcards reveal">
+  <div class="dlcard free">
+    <div class="kick"><h3 data-i18n="dl.free_title">Free download</h3><span class="badge f" data-i18n="dl.free_tag">Free</span></div>
+    <p class="d" data-i18n="dl.free_body">Download straight from here. No ads, no account, nothing to sign up for.</p>
+    <div class="btnrow"><a class="btn btn-fill" data-dl href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span data-i18n="dl.free_btn">Get it free</span></a></div>
+    <p class="foot" data-i18n="dl.free_foot">Windows 11 · MSIX installer · auto-updates</p>
+  </div>
+  <div class="dlcard">
+    <div class="kick"><h3>Microsoft Store</h3><span class="badge p">US$3</span></div>
+    <p class="d" data-i18n="dl.store_body">Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.</p>
+    <div class="btnrow"><a class="btn btn-soft" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener"><span data-i18n="dl.store_btn">Get it from the Microsoft Store</span></a></div>
+    <p class="foot" data-i18n="dl.store_foot">Supports development · thank you</p>
+  </div>
+</div>
 </section>
 
 <footer><div class="wide">
   <div class="brand"><img src="assets/otter.png" alt="" style="width:24px;height:24px;border-radius:6px"><span class="wm" style="font-size:16px">OtterZip</span></div>
-  <span class="ft-tag" data-i18n="footer.tagline">The quiet archive tool for Windows.</span>
   <div class="spacer"></div>
-  <a href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener" data-store>Microsoft Store</a>
+  <a href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" data-store target="_blank" rel="noopener">Microsoft Store</a>
   <a href="privacy.html" data-i18n="footer.privacy">Privacy</a>
   <span>&copy; 2026 LumiBear Studio</span>
 </div></footer>
 
 <script>
-/* ---- i18n dictionary (English + Korean; other languages appended as translated) ---- */
 var I18N = {
   en: {
     "meta.title":"OtterZip — the quiet archive tool for Windows",
-    "meta.desc":"A quiet, no-clutter archive tool for Windows. Compress and extract right from Explorer — ZIP, 7z, RAR, TAR and more, with AES-256 encryption and split archives. Free, no ads, no accounts, no tracking.",
     "nav.download":"Download free",
-    "hero.eyebrow":"For Windows 11",
     "hero.title":"Zip. <span class=\"grad\">Done.</span>",
-    "hero.sub":"No ads, no bundles, no nagging. Just compress and extract — a simple archive tool for Windows.",
-    "hero.cta_free":"Download free",
-    "hero.cta_store":"Get it on the Store",
+    "hero.sub":"Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.",
+    "hero.cta_free":"Download free","hero.cta_store":"Get it on the Store","hero.store_small":"Get it from",
+
+    "simple.eyebrow":"Simple","simple.title":"One thing, done well.",
+    "simple.body":"No modes, no clutter, no learning curve. When you do open the window, everything is already where you'd expect.",
     "wedge.title":"No ads.<br>No accounts.<br>No tracking.",
-    "wedge.body":"The archive tool that just compresses and extracts — then gets out of your way.",
-    "exp.eyebrow":"Right from Explorer",
-    "exp.title":"You barely open the app.",
-    "exp.body":"Right-click a file to compress it. Right-click an archive to extract it. Most of the time, OtterZip works entirely from the menu you already use.",
-    "exp.mi1":"Compress with OtterZip…",
-    "exp.mi2":"Compress to Reports.7z",
-    "exp.mi3":"Compress to Reports.zip",
-    "feat.eyebrow":"Everything you need",
-    "feat.title":"Small app. Full toolbox.",
-    "f1.t":"Every common format",
-    "f1.b":"Create ZIP, 7z, TAR and TAR.GZ. Extract those plus RAR, GZ, BZ2, XZ, ISO and more.",
-    "f2.t":"Encrypt & split",
-    "f2.b":"Lock archives with AES-256. Split large archives into multiple volumes.",
-    "f3.t":"Right-click integration",
-    "f3.b":"Compress and extract from the Explorer menu — no window to open first.",
-    "f4.t":"Built for speed",
-    "f4.b":"A native Rust core does the work — quickly, and out of your way.",
-    "f5.t":"Private by default",
-    "f5.b":"No ads. No accounts. No tracking. Crash reports are strictly opt-in.",
-    "f6.t":"Yours to tune",
-    "f6.b":"Light, dark, or follow system. Ten languages built in.",
-    "fmt.eyebrow":"Formats",
-    "fmt.title":"Opens just about anything.",
-    "fmt.more":"& more",
-    "tune.eyebrow":"Quietly yours",
-    "tune.title":"Sensible defaults, out of the box.",
-    "tune.body":"Theme, language, overwrite rules and more — tuned however you like. Ten languages, light and dark, and it stays out of the way until you need it.",
-    "dl.eyebrow":"How to get it",
-    "dl.title":"Free, or support us.",
+    "wedge.body":"No bundles, no nagging, nothing to sign up for. It compresses and extracts, then gets out of your way. Crash reports are strictly opt-in.",
+    "rust.eyebrow":"Speed","rust.title":"A native core, quietly fast.",
+    "rust.body":"The engine is written in Rust — native code that does the work and doesn't leave you waiting.",
+    "rust.compress":"Compress","rust.extract":"Extract",
+    "native.eyebrow":"Native UI","native.title":"Looks like Windows, because it is.",
+    "native.body":"Built with C# and WinUI — a real native interface, not a web page in a window. Fluent design, light or dark, ten languages.",
+    "fmt.eyebrow":"Formats","fmt.title":"Opens just about anything.",
+    "fmt.body":"ZIP, 7z, RAR, TAR and more — with AES-256 and split archives when you need them.",
+    "dl.eyebrow":"How to get it","dl.title":"Free, or support us.",
     "dl.body":"The free download and the Store version are the exact same app. Pick whichever suits you.",
-    "dl.free_title":"Free download",
-    "dl.free_tag":"Free",
+    "dl.free_title":"Free download","dl.free_tag":"Free",
     "dl.free_body":"Download straight from here. No ads, no account, nothing to sign up for.",
-    "dl.free_btn":"Get it free",
-    "dl.free_foot":"Windows 11 · MSIX installer · auto-updates",
+    "dl.free_btn":"Get it free","dl.free_foot":"Windows 11 · MSIX installer · auto-updates",
     "dl.store_body":"Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.",
-    "dl.store_btn":"Get it from the Microsoft Store",
-    "dl.store_foot":"Supports development · thank you",
-    "dl.note":"Both versions are identical and built from the same source. If your browser warns on first install, that's expected for a directly-downloaded app.",
-    "footer.privacy":"Privacy",
-    "footer.tagline":"The quiet archive tool for Windows."
+    "dl.store_btn":"Get it from the Microsoft Store","dl.store_foot":"Supports development · thank you",
+    "footer.privacy":"Privacy"
   },
   ko: {
     "meta.title":"OtterZip — 조용한 Windows 압축 도구",
-    "meta.desc":"군더더기 없는 조용한 Windows 압축 도구. 탐색기에서 바로 압축하고 풀어요. ZIP·7z·RAR·TAR 등 여러 포맷, AES-256 암호화와 분할 압축까지. 무료 · 광고 없음 · 계정 없음 · 추적 없음.",
     "nav.download":"무료 다운로드",
-    "hero.eyebrow":"Windows 11 전용",
     "hero.title":"압축은 <span class=\"grad\">간단하게.</span>",
-    "hero.sub":"광고도, 번들도, 잔소리도 없어요. 그냥 압축하고 푸는, 단순한 Windows 압축 도구.",
-    "hero.cta_free":"무료 다운로드",
-    "hero.cta_store":"스토어에서 받기",
-    "wedge.title":"광고 없음.<br>계정 없음.<br>추적 없음.",
-    "wedge.body":"압축하고 풀기만 하고, 곧바로 비켜서는 압축 도구.",
-    "exp.eyebrow":"탐색기에서 바로",
-    "exp.title":"앱을 열 일이 거의 없어요.",
-    "exp.body":"파일을 우클릭해 압축하고, 아카이브를 우클릭해 풀어요. 대부분은 이미 쓰던 그 메뉴만으로 끝나요.",
-    "exp.mi1":"OtterZip으로 압축…",
-    "exp.mi2":"Reports.7z로 압축",
-    "exp.mi3":"Reports.zip로 압축",
-    "feat.eyebrow":"필요한 건 다",
-    "feat.title":"작은 앱, 알찬 도구함.",
-    "f1.t":"필요한 포맷 전부",
-    "f1.b":"ZIP·7z·TAR·TAR.GZ를 만들고, 여기에 RAR·GZ·BZ2·XZ·ISO까지 풀어요.",
-    "f2.t":"암호화 & 분할",
-    "f2.b":"AES-256으로 아카이브를 잠그고, 큰 파일은 여러 볼륨으로 나눠요.",
-    "f3.t":"우클릭 통합",
-    "f3.b":"탐색기 메뉴에서 바로 압축·해제 — 창을 먼저 열 필요가 없어요.",
-    "f4.t":"빠르게",
-    "f4.b":"네이티브 Rust 코어가 조용하고 빠르게 처리해요.",
-    "f5.t":"기본이 프라이버시",
-    "f5.b":"광고·계정·추적 없음. 오류 보고는 동의할 때만 보냅니다.",
-    "f6.t":"당신에게 맞춰",
-    "f6.b":"라이트·다크·시스템 테마. 10개 언어 내장.",
-    "fmt.eyebrow":"지원 포맷",
-    "fmt.title":"웬만한 건 다 열어요.",
-    "fmt.more":"그 외 다수",
-    "tune.eyebrow":"조용히, 당신 방식대로",
-    "tune.title":"기본값부터 잘 잡혀 있어요.",
-    "tune.body":"테마·언어·덮어쓰기 규칙까지 원하는 대로. 10개 언어, 라이트·다크, 그리고 필요할 때까지 조용히 비켜 있어요.",
-    "dl.eyebrow":"받는 방법",
-    "dl.title":"무료로, 또는 후원으로.",
-    "dl.body":"무료 다운로드와 스토어 버전은 완전히 같은 앱이에요. 편한 쪽으로 받으세요.",
-    "dl.free_title":"무료 다운로드",
-    "dl.free_tag":"무료",
-    "dl.free_body":"홈페이지에서 바로 받기. 광고도, 계정도, 가입도 없어요.",
-    "dl.free_btn":"무료로 받기",
-    "dl.free_foot":"Windows 11 · MSIX 설치 · 자동 업데이트",
-    "dl.store_body":"앱은 완전히 동일해요. 스토어 구매는 순수하게 개발을 후원하는 방법입니다. 업데이트는 스토어로 자동 전달돼요.",
-    "dl.store_btn":"Microsoft Store에서 받기",
-    "dl.store_foot":"개발 후원 · 감사합니다",
-    "dl.note":"두 버전은 같은 소스로 만든 동일한 앱이에요. 직접 받은 앱은 첫 설치 시 안내 창이 뜰 수 있어요.",
-    "footer.privacy":"개인정보",
-    "footer.tagline":"조용한 Windows 압축 도구."
-  },
-  ja: {"meta.title": "OtterZip — 静かな Windows アーカイブツール", "meta.desc": "余計なもののない、静かな Windows アーカイブツール。エクスプローラーからそのまま圧縮・解凍。ZIP・7z・RAR・TAR などのフォーマットに対応し、AES-256 暗号化と分割アーカイブも。無料 · 広告なし · アカウントなし · トラッキングなし。", "nav.download": "無料ダウンロード", "hero.eyebrow": "Windows 11 向け", "hero.title": "圧縮。<span class=\"grad\">完了。</span>", "hero.sub": "広告も、抱き合わせも、しつこい通知もありません。ただ圧縮して解凍する、シンプルな Windows アーカイブツール。", "hero.cta_free": "無料ダウンロード", "hero.cta_store": "ストアで入手", "wedge.title": "広告なし。<br>アカウントなし。<br>トラッキングなし。", "wedge.body": "圧縮して解凍するだけ、そしてすっと身を引くアーカイブツール。", "exp.eyebrow": "エクスプローラーからそのまま", "exp.title": "アプリを開くことは、ほとんどありません。", "exp.body": "ファイルを右クリックして圧縮。アーカイブを右クリックして解凍。ほとんどの場合、OtterZip はいつも使っているメニューだけで完結します。", "exp.mi1": "OtterZip で圧縮…", "exp.mi2": "Reports.7z に圧縮", "exp.mi3": "Reports.zip に圧縮", "feat.eyebrow": "必要なものは、すべて", "feat.title": "小さなアプリ、充実の道具箱。", "f1.t": "よく使うフォーマットすべて", "f1.b": "ZIP・7z・TAR・TAR.GZ を作成。さらに RAR・GZ・BZ2・XZ・ISO なども解凍します。", "f2.t": "暗号化 & 分割", "f2.b": "AES-256 でアーカイブをロック。大きなアーカイブは複数のボリュームに分割します。", "f3.t": "右クリック統合", "f3.b": "エクスプローラーのメニューから圧縮・解凍 — 先にウィンドウを開く必要はありません。", "f4.t": "速さを第一に", "f4.b": "ネイティブの Rust コアが、静かに、そして速く処理します。", "f5.t": "はじめからプライベート", "f5.b": "広告なし。アカウントなし。トラッキングなし。クラッシュレポートは同意したときだけ送信します。", "f6.t": "あなた好みに", "f6.b": "ライト・ダーク・システム追従。10言語を内蔵。", "fmt.eyebrow": "対応フォーマット", "fmt.title": "たいていのものは開けます。", "fmt.more": "ほか多数", "tune.eyebrow": "静かに、あなたのままに", "tune.title": "はじめから、ちょうどいい初期設定。", "tune.body": "テーマ・言語・上書きのルールまで、思いのままに。10言語、ライトとダーク、そして必要になるまで静かに身を引きます。", "dl.eyebrow": "入手方法", "dl.title": "無料で、あるいは応援で。", "dl.body": "無料ダウンロードとストア版は、まったく同じアプリです。お好きなほうをどうぞ。", "dl.free_title": "無料ダウンロード", "dl.free_tag": "無料", "dl.free_body": "ここからそのままダウンロード。広告も、アカウントも、登録もありません。", "dl.free_btn": "無料で入手", "dl.free_foot": "Windows 11 · MSIX インストーラー · 自動更新", "dl.store_body": "アプリは同じです。ストアでの購入は、開発を応援する方法にすぎません。更新はストアから自動で届きます。", "dl.store_btn": "Microsoft Store で入手", "dl.store_foot": "開発を応援 · ありがとうございます", "dl.note": "どちらのバージョンも同じソースから作られた同一のアプリです。直接ダウンロードしたアプリでは、初回インストール時にブラウザーが警告を表示することがあります。", "footer.privacy": "プライバシー", "footer.tagline": "静かな Windows アーカイブツール。"},
-  zh: {"meta.title": "OtterZip — 安静的 Windows 压缩工具", "meta.desc": "安静、清爽的 Windows 压缩工具。在资源管理器里直接压缩和解压 —— ZIP、7z、RAR、TAR 等多种格式，支持 AES-256 加密和分卷压缩。免费 · 无广告 · 无账户 · 无跟踪。", "nav.download": "免费下载", "hero.eyebrow": "Windows 11 专用", "hero.title": "压缩，<span class=\"grad\">搞定。</span>", "hero.sub": "没有广告，没有捆绑，没有唠叨。只是压缩和解压 —— 一款简单的 Windows 压缩工具。", "hero.cta_free": "免费下载", "hero.cta_store": "在商店获取", "wedge.title": "无广告。<br>无账户。<br>无跟踪。", "wedge.body": "只管压缩和解压，然后就悄悄让开的压缩工具。", "exp.eyebrow": "就在资源管理器里", "exp.title": "几乎不用打开应用。", "exp.body": "右键单击文件即可压缩，右键单击压缩包即可解压。多数时候，OtterZip 只用你早已熟悉的那个菜单就够了。", "exp.mi1": "用 OtterZip 压缩…", "exp.mi2": "压缩为 Reports.7z", "exp.mi3": "压缩为 Reports.zip", "feat.eyebrow": "该有的都有", "feat.title": "小巧的应用，齐全的工具。", "f1.t": "常用格式全覆盖", "f1.b": "创建 ZIP、7z、TAR 和 TAR.GZ。解压这些，还有 RAR、GZ、BZ2、XZ、ISO 等更多格式。", "f2.t": "加密与分卷", "f2.b": "用 AES-256 锁定压缩包。把大压缩包分割成多个分卷。", "f3.t": "右键菜单集成", "f3.b": "在资源管理器菜单里压缩和解压 —— 无需先打开窗口。", "f4.t": "为速度而生", "f4.b": "原生 Rust 核心负责处理 —— 快速，而且不打扰你。", "f5.t": "默认保护隐私", "f5.b": "无广告。无账户。无跟踪。崩溃报告仅在你同意后发送。", "f6.t": "随你调整", "f6.b": "浅色、深色，或跟随系统。内置十种语言。", "fmt.eyebrow": "支持格式", "fmt.title": "几乎什么都能打开。", "fmt.more": "等更多", "tune.eyebrow": "安静地，随你所愿", "tune.title": "开箱即用的合理默认值。", "tune.body": "主题、语言、覆盖规则等等 —— 都能随你调整。十种语言，浅色与深色，在你需要之前一直安静地让开。", "dl.eyebrow": "如何获取", "dl.title": "免费，或支持我们。", "dl.body": "免费下载版和商店版是完全相同的应用。选你方便的那种即可。", "dl.free_title": "免费下载", "dl.free_tag": "免费", "dl.free_body": "直接从这里下载。没有广告，没有账户，无需注册。", "dl.free_btn": "免费获取", "dl.free_foot": "Windows 11 · MSIX 安装程序 · 自动更新", "dl.store_body": "同一款应用 —— 在商店购买只是为了支持开发。更新会通过商店自动送达。", "dl.store_btn": "在 Microsoft Store 获取", "dl.store_foot": "支持开发 · 谢谢", "dl.note": "两个版本完全相同，由同一份源码构建。如果浏览器在首次安装时提示警告，对于直接下载的应用来说这是正常的。", "footer.privacy": "隐私", "footer.tagline": "安静的 Windows 压缩工具。"},
-  de: {"meta.title": "OtterZip — das ruhige Archivtool für Windows", "meta.desc": "Ein ruhiges, aufgeräumtes Archivtool für Windows. Packen und entpacken Sie direkt im Explorer — ZIP, 7z, RAR, TAR und mehr, mit AES-256-Verschlüsselung und mehrteiligen Archiven. Kostenlos, keine Werbung, keine Konten, kein Tracking.", "nav.download": "Kostenlos laden", "hero.eyebrow": "Für Windows 11", "hero.title": "Zippen. <span class=\"grad\">Fertig.</span>", "hero.sub": "Keine Werbung, keine Bundles, kein Genörgel. Einfach packen und entpacken — ein schlichtes Archivtool für Windows.", "hero.cta_free": "Kostenlos laden", "hero.cta_store": "Im Store holen", "wedge.title": "Keine Werbung.<br>Keine Konten.<br>Kein Tracking.", "wedge.body": "Das Archivtool, das einfach packt und entpackt — und sich dann zurückzieht.", "exp.eyebrow": "Direkt aus dem Explorer", "exp.title": "Sie öffnen die App fast nie.", "exp.body": "Rechtsklick auf eine Datei, um sie zu packen. Rechtsklick auf ein Archiv, um es zu entpacken. Meist erledigt OtterZip alles über das Menü, das Sie ohnehin schon nutzen.", "exp.mi1": "Mit OtterZip packen…", "exp.mi2": "Zu Reports.7z packen", "exp.mi3": "Zu Reports.zip packen", "feat.eyebrow": "Alles, was Sie brauchen", "feat.title": "Kleine App. Voller Werkzeugkasten.", "f1.t": "Alle gängigen Formate", "f1.b": "Erstellen Sie ZIP, 7z, TAR und TAR.GZ. Entpacken Sie diese sowie RAR, GZ, BZ2, XZ, ISO und mehr.", "f2.t": "Verschlüsseln & teilen", "f2.b": "Sperren Sie Archive mit AES-256. Teilen Sie große Archive in mehrere Teile.", "f3.t": "Rechtsklick-Integration", "f3.b": "Packen und entpacken direkt aus dem Explorer-Menü — ohne vorher ein Fenster zu öffnen.", "f4.t": "Auf Tempo ausgelegt", "f4.b": "Ein nativer Rust-Kern erledigt die Arbeit — schnell und unauffällig.", "f5.t": "Privat von Haus aus", "f5.b": "Keine Werbung. Keine Konten. Kein Tracking. Absturzberichte nur mit Ihrer Zustimmung.", "f6.t": "Ganz nach Ihnen", "f6.b": "Hell, dunkel oder dem System folgen. Zehn Sprachen integriert.", "fmt.eyebrow": "Formate", "fmt.title": "Öffnet so gut wie alles.", "fmt.more": "& mehr", "tune.eyebrow": "Leise, ganz nach Ihnen", "tune.title": "Sinnvolle Voreinstellungen ab Werk.", "tune.body": "Design, Sprache, Überschreibregeln und mehr — so eingestellt, wie Sie möchten. Zehn Sprachen, hell und dunkel, und es hält sich zurück, bis Sie es brauchen.", "dl.eyebrow": "So bekommen Sie es", "dl.title": "Kostenlos, oder unterstützen Sie uns.", "dl.body": "Der kostenlose Download und die Store-Version sind exakt dieselbe App. Wählen Sie, was Ihnen passt.", "dl.free_title": "Kostenloser Download", "dl.free_tag": "Kostenlos", "dl.free_body": "Laden Sie direkt hier. Keine Werbung, kein Konto, keine Anmeldung.", "dl.free_btn": "Kostenlos holen", "dl.free_foot": "Windows 11 · MSIX-Installer · automatische Updates", "dl.store_body": "Dieselbe App — der Kauf im Store unterstützt einfach die Entwicklung. Updates kommen automatisch über den Store.", "dl.store_btn": "Im Microsoft Store holen", "dl.store_foot": "Unterstützt die Entwicklung · danke", "dl.note": "Beide Versionen sind identisch und stammen aus derselben Quelle. Warnt Ihr Browser bei der ersten Installation, ist das bei einer direkt geladenen App normal.", "footer.privacy": "Datenschutz", "footer.tagline": "Das ruhige Archivtool für Windows."},
-  fr: {"meta.title": "OtterZip — l'outil d'archivage discret pour Windows", "meta.desc": "Un outil d'archivage discret et épuré pour Windows. Compressez et extrayez directement depuis l'Explorateur — ZIP, 7z, RAR, TAR et plus, avec chiffrement AES-256 et archives multivolumes. Gratuit, sans publicité, sans compte, sans suivi.", "nav.download": "Télécharger gratuitement", "hero.eyebrow": "Pour Windows 11", "hero.title": "Compressez. <span class=\"grad\">Terminé.</span>", "hero.sub": "Pas de publicité, pas de superflu, pas de rappels. Juste compresser et extraire — un outil d'archivage simple pour Windows.", "hero.cta_free": "Télécharger gratuitement", "hero.cta_store": "Obtenir sur le Store", "wedge.title": "Sans publicité.<br>Sans compte.<br>Sans suivi.", "wedge.body": "L'outil d'archivage qui se contente de compresser et d'extraire — puis s'efface.", "exp.eyebrow": "Directement depuis l'Explorateur", "exp.title": "Vous ouvrez à peine l'application.", "exp.body": "Clic droit sur un fichier pour le compresser. Clic droit sur une archive pour l'extraire. La plupart du temps, OtterZip fonctionne entièrement depuis le menu que vous utilisez déjà.", "exp.mi1": "Compresser avec OtterZip…", "exp.mi2": "Compresser en Reports.7z", "exp.mi3": "Compresser en Reports.zip", "feat.eyebrow": "Tout ce qu'il vous faut", "feat.title": "Application légère. Boîte à outils complète.", "f1.t": "Tous les formats courants", "f1.b": "Créez des ZIP, 7z, TAR et TAR.GZ. Extrayez ceux-ci ainsi que RAR, GZ, BZ2, XZ, ISO et plus.", "f2.t": "Chiffrer & diviser", "f2.b": "Verrouillez les archives avec AES-256. Divisez les grandes archives en plusieurs volumes.", "f3.t": "Intégration au clic droit", "f3.b": "Compressez et extrayez depuis le menu de l'Explorateur — aucune fenêtre à ouvrir d'abord.", "f4.t": "Conçu pour la vitesse", "f4.b": "Un cœur natif en Rust fait le travail — rapidement, et sans vous déranger.", "f5.t": "Privé par défaut", "f5.b": "Sans publicité. Sans compte. Sans suivi. Les rapports d'erreur sont strictement facultatifs.", "f6.t": "À votre convenance", "f6.b": "Clair, sombre, ou selon le système. Dix langues intégrées.", "fmt.eyebrow": "Formats", "fmt.title": "Ouvre presque tout.", "fmt.more": "& plus", "tune.eyebrow": "Discrètement vôtre", "tune.title": "Des réglages par défaut bien pensés.", "tune.body": "Thème, langue, règles de remplacement et plus — réglés comme vous le souhaitez. Dix langues, clair et sombre, et il reste discret jusqu'à ce que vous en ayez besoin.", "dl.eyebrow": "Comment l'obtenir", "dl.title": "Gratuit, ou soutenez-nous.", "dl.body": "Le téléchargement gratuit et la version du Store sont exactement la même application. Choisissez celle qui vous convient.", "dl.free_title": "Téléchargement gratuit", "dl.free_tag": "Gratuit", "dl.free_body": "Téléchargez directement ici. Sans publicité, sans compte, aucune inscription.", "dl.free_btn": "Obtenir gratuitement", "dl.free_foot": "Windows 11 · installateur MSIX · mises à jour automatiques", "dl.store_body": "Même application — l'acheter sur le Store soutient simplement le développement. Les mises à jour arrivent automatiquement via le Store.", "dl.store_btn": "Obtenir sur le Microsoft Store", "dl.store_foot": "Soutient le développement · merci", "dl.note": "Les deux versions sont identiques et issues de la même source. Si votre navigateur affiche un avertissement à la première installation, c'est normal pour une application téléchargée directement.", "footer.privacy": "Confidentialité", "footer.tagline": "L'outil d'archivage discret pour Windows."},
-  es: {"meta.title": "OtterZip — la herramienta de archivado discreta para Windows", "meta.desc": "Una herramienta de archivado discreta y sin estorbos para Windows. Comprime y extrae directamente desde el Explorador: ZIP, 7z, RAR, TAR y más, con cifrado AES-256 y archivos divididos. Gratis, sin anuncios, sin cuentas, sin seguimiento.", "nav.download": "Descarga gratis", "hero.eyebrow": "Para Windows 11", "hero.title": "Comprime. <span class=\"grad\">Listo.</span>", "hero.sub": "Sin anuncios, sin extras, sin insistencias. Solo comprimir y extraer: una herramienta de archivado sencilla para Windows.", "hero.cta_free": "Descarga gratis", "hero.cta_store": "Consíguelo en la Store", "wedge.title": "Sin anuncios.<br>Sin cuentas.<br>Sin seguimiento.", "wedge.body": "La herramienta de archivado que solo comprime y extrae, y luego se aparta.", "exp.eyebrow": "Directo desde el Explorador", "exp.title": "Casi nunca abres la app.", "exp.body": "Haz clic derecho en un archivo para comprimirlo. Haz clic derecho en un archivo comprimido para extraerlo. Casi siempre, OtterZip funciona desde el menú que ya usas.", "exp.mi1": "Comprimir con OtterZip…", "exp.mi2": "Comprimir a Reports.7z", "exp.mi3": "Comprimir a Reports.zip", "feat.eyebrow": "Todo lo que necesitas", "feat.title": "App pequeña. Caja de herramientas completa.", "f1.t": "Todos los formatos habituales", "f1.b": "Crea ZIP, 7z, TAR y TAR.GZ. Extrae esos y también RAR, GZ, BZ2, XZ, ISO y más.", "f2.t": "Cifrar & dividir", "f2.b": "Bloquea tus archivos comprimidos con AES-256. Divide los grandes en varios volúmenes.", "f3.t": "Integración con el clic derecho", "f3.b": "Comprime y extrae desde el menú del Explorador, sin abrir ninguna ventana.", "f4.t": "Diseñado para ir rápido", "f4.b": "Un núcleo nativo en Rust hace el trabajo: rápido y sin molestar.", "f5.t": "Privado de serie", "f5.b": "Sin anuncios. Sin cuentas. Sin seguimiento. Los informes de fallos solo se envían si tú lo permites.", "f6.t": "A tu medida", "f6.b": "Claro, oscuro o según el sistema. Diez idiomas incluidos.", "fmt.eyebrow": "Formatos", "fmt.title": "Abre casi cualquier cosa.", "fmt.more": "y más", "tune.eyebrow": "A tu manera, sin ruido", "tune.title": "Ajustes sensatos, desde el primer momento.", "tune.body": "Tema, idioma, reglas de sobrescritura y más: ajústalo a tu gusto. Diez idiomas, claro y oscuro, y se mantiene al margen hasta que lo necesitas.", "dl.eyebrow": "Cómo conseguirlo", "dl.title": "Gratis, o con tu apoyo.", "dl.body": "La descarga gratuita y la versión de la Store son exactamente la misma app. Elige la que prefieras.", "dl.free_title": "Descarga gratuita", "dl.free_tag": "Gratis", "dl.free_body": "Descárgala directamente desde aquí. Sin anuncios, sin cuenta, sin registros.", "dl.free_btn": "Consíguela gratis", "dl.free_foot": "Windows 11 · instalador MSIX · actualizaciones automáticas", "dl.store_body": "La misma app: comprarla en la Store simplemente apoya el desarrollo. Las actualizaciones llegan a través de la Store automáticamente.", "dl.store_btn": "Consíguela en la Microsoft Store", "dl.store_foot": "Apoya el desarrollo · gracias", "dl.note": "Ambas versiones son idénticas y se crean a partir del mismo código. Si tu navegador muestra un aviso en la primera instalación, es normal en una app descargada directamente.", "footer.privacy": "Privacidad", "footer.tagline": "La herramienta de archivado discreta para Windows."},
-  pt: {"meta.title": "OtterZip — o compactador discreto para Windows", "meta.desc": "Um compactador discreto e sem excessos para Windows. Compacte e extraia direto do Explorador — ZIP, 7z, RAR, TAR e mais, com criptografia AES-256 e arquivos divididos. Grátis, sem anúncios, sem contas, sem rastreamento.", "nav.download": "Baixar grátis", "hero.eyebrow": "Para o Windows 11", "hero.title": "Compacte. <span class=\"grad\">Pronto.</span>", "hero.sub": "Sem anúncios, sem programas embutidos, sem insistência. Só compactar e extrair — um compactador simples para Windows.", "hero.cta_free": "Baixar grátis", "hero.cta_store": "Baixar na Store", "wedge.title": "Sem anúncios.<br>Sem contas.<br>Sem rastreamento.", "wedge.body": "O utilitário que só compacta e extrai — e depois sai do seu caminho.", "exp.eyebrow": "Direto do Explorador", "exp.title": "Você quase não abre o app.", "exp.body": "Clique com o botão direito em um arquivo para compactar. Clique com o botão direito em um arquivo compactado para extrair. Na maioria das vezes, o OtterZip funciona só pelo menu que você já usa.", "exp.mi1": "Compactar com o OtterZip…", "exp.mi2": "Compactar em Reports.7z", "exp.mi3": "Compactar em Reports.zip", "feat.eyebrow": "Tudo o que você precisa", "feat.title": "App pequeno. Caixa de ferramentas completa.", "f1.t": "Todos os formatos comuns", "f1.b": "Crie ZIP, 7z, TAR e TAR.GZ. Extraia esses e ainda RAR, GZ, BZ2, XZ, ISO e mais.", "f2.t": "Criptografe & divida", "f2.b": "Proteja arquivos com AES-256. Divida arquivos grandes em vários volumes.", "f3.t": "Integração com o botão direito", "f3.b": "Compacte e extraia pelo menu do Explorador — sem abrir uma janela antes.", "f4.t": "Feito para velocidade", "f4.b": "Um núcleo nativo em Rust faz o trabalho — rápido e sem atrapalhar.", "f5.t": "Privado por padrão", "f5.b": "Sem anúncios. Sem contas. Sem rastreamento. Relatórios de erro só com a sua permissão.", "f6.t": "Ajuste do seu jeito", "f6.b": "Claro, escuro ou seguir o sistema. Dez idiomas integrados.", "fmt.eyebrow": "Formatos", "fmt.title": "Abre quase tudo.", "fmt.more": "& mais", "tune.eyebrow": "Discreto, do seu jeito", "tune.title": "Padrões sensatos, prontos para usar.", "tune.body": "Tema, idioma, regras de substituição e mais — ajustados como você quiser. Dez idiomas, claro e escuro, e ele fica de lado até você precisar.", "dl.eyebrow": "Como obter", "dl.title": "Grátis, ou nos apoie.", "dl.body": "O download grátis e a versão da Store são exatamente o mesmo app. Escolha o que preferir.", "dl.free_title": "Download grátis", "dl.free_tag": "Grátis", "dl.free_body": "Baixe direto daqui. Sem anúncios, sem conta, sem cadastro.", "dl.free_btn": "Baixar grátis", "dl.free_foot": "Windows 11 · instalador MSIX · atualizações automáticas", "dl.store_body": "Mesmo app — comprá-lo na Store apenas apoia o desenvolvimento. As atualizações chegam pela Store automaticamente.", "dl.store_btn": "Baixar na Microsoft Store", "dl.store_foot": "Apoia o desenvolvimento · obrigado", "dl.note": "As duas versões são idênticas e feitas a partir do mesmo código. Se o navegador exibir um aviso na primeira instalação, isso é normal para um app baixado diretamente.", "footer.privacy": "Privacidade", "footer.tagline": "O compactador discreto para Windows."},
-  ru: {"meta.title": "OtterZip — тихий архиватор для Windows", "meta.desc": "Тихий, без лишнего архиватор для Windows. Сжимайте и распаковывайте прямо из Проводника — ZIP, 7z, RAR, TAR и другие форматы, с шифрованием AES-256 и разделением на тома. Бесплатно, без рекламы, без аккаунтов, без слежки.", "nav.download": "Скачать бесплатно", "hero.eyebrow": "Для Windows 11", "hero.title": "Сжать. <span class=\"grad\">Готово.</span>", "hero.sub": "Без рекламы, без довесков, без назойливости. Просто сжать и распаковать — простой архиватор для Windows.", "hero.cta_free": "Скачать бесплатно", "hero.cta_store": "Получить в Store", "wedge.title": "Без рекламы.<br>Без аккаунтов.<br>Без слежки.", "wedge.body": "Архиватор, который просто сжимает и распаковывает — и тут же уходит с дороги.", "exp.eyebrow": "Прямо из Проводника", "exp.title": "Приложение почти не приходится открывать.", "exp.body": "Щёлкните файл правой кнопкой, чтобы сжать. Щёлкните архив, чтобы распаковать. Чаще всего OtterZip работает прямо из привычного меню.", "exp.mi1": "Сжать с OtterZip…", "exp.mi2": "Сжать в Reports.7z", "exp.mi3": "Сжать в Reports.zip", "feat.eyebrow": "Всё, что нужно", "feat.title": "Небольшое приложение. Полный набор.", "f1.t": "Все нужные форматы", "f1.b": "Создавайте ZIP, 7z, TAR и TAR.GZ. Распаковывайте их, а также RAR, GZ, BZ2, XZ, ISO и другие.", "f2.t": "Шифрование & разделение", "f2.b": "Защищайте архивы с помощью AES-256. Делите большие архивы на несколько томов.", "f3.t": "Интеграция в контекстное меню", "f3.b": "Сжимайте и распаковывайте из меню Проводника — без открытия окна.", "f4.t": "Создан для скорости", "f4.b": "Всю работу делает нативное ядро на Rust — быстро и незаметно.", "f5.t": "Приватность по умолчанию", "f5.b": "Без рекламы. Без аккаунтов. Без слежки. Отчёты о сбоях — только с вашего согласия.", "f6.t": "Настройте под себя", "f6.b": "Светлая, тёмная или как в системе. Десять языков внутри.", "fmt.eyebrow": "Форматы", "fmt.title": "Открывает почти всё.", "fmt.more": "& другие", "tune.eyebrow": "Тихо, по-вашему", "tune.title": "Разумные настройки из коробки.", "tune.body": "Тема, язык, правила перезаписи и другое — настройте как захотите. Десять языков, светлая и тёмная тема, и оно не мешает, пока не понадобится.", "dl.eyebrow": "Как получить", "dl.title": "Бесплатно — или в поддержку.", "dl.body": "Бесплатная загрузка и версия из Store — одно и то же приложение. Выбирайте, что удобнее.", "dl.free_title": "Бесплатная загрузка", "dl.free_tag": "Бесплатно", "dl.free_body": "Скачайте прямо отсюда. Без рекламы, без аккаунта, без регистрации.", "dl.free_btn": "Скачать бесплатно", "dl.free_foot": "Windows 11 · установщик MSIX · автообновления", "dl.store_body": "То же приложение — покупка в Store просто поддерживает разработку. Обновления приходят через Store автоматически.", "dl.store_btn": "Получить в Microsoft Store", "dl.store_foot": "Поддержка разработки · спасибо", "dl.note": "Обе версии одинаковы и собраны из одного исходного кода. Если браузер предупредит при первой установке — для загруженного напрямую приложения это нормально.", "footer.privacy": "Конфиденциальность", "footer.tagline": "Тихий архиватор для Windows."},
-  it: {"meta.title": "OtterZip — lo strumento di archiviazione discreto per Windows", "meta.desc": "Uno strumento di archiviazione discreto e ordinato per Windows. Comprimi ed estrai direttamente da Esplora file — ZIP, 7z, RAR, TAR e altro, con crittografia AES-256 e archivi divisi in volumi. Gratis, niente pubblicità, niente account, niente tracciamento.", "nav.download": "Scarica gratis", "hero.eyebrow": "Per Windows 11", "hero.title": "Comprimi. <span class=\"grad\">Fatto.</span>", "hero.sub": "Niente pubblicità, niente bundle, niente seccature. Solo comprimere ed estrarre — un semplice strumento di archiviazione per Windows.", "hero.cta_free": "Scarica gratis", "hero.cta_store": "Scaricalo dallo Store", "wedge.title": "Niente pubblicità.<br>Niente account.<br>Niente tracciamento.", "wedge.body": "Lo strumento di archiviazione che comprime ed estrae, e poi si fa da parte.", "exp.eyebrow": "Direttamente da Esplora file", "exp.title": "Non serve quasi mai aprire l'app.", "exp.body": "Fai clic destro su un file per comprimerlo. Fai clic destro su un archivio per estrarlo. La maggior parte delle volte, OtterZip funziona interamente dal menu che usi già.", "exp.mi1": "Comprimi con OtterZip…", "exp.mi2": "Comprimi in Reports.7z", "exp.mi3": "Comprimi in Reports.zip", "feat.eyebrow": "Tutto ciò che serve", "feat.title": "App piccola. Kit completo.", "f1.t": "Tutti i formati comuni", "f1.b": "Crea ZIP, 7z, TAR e TAR.GZ. Estrai questi più RAR, GZ, BZ2, XZ, ISO e altro.", "f2.t": "Cripta & dividi", "f2.b": "Blocca gli archivi con AES-256. Dividi gli archivi grandi in più volumi.", "f3.t": "Integrazione col clic destro", "f3.b": "Comprimi ed estrai dal menu di Esplora file — senza aprire prima una finestra.", "f4.t": "Fatto per la velocità", "f4.b": "Un core nativo in Rust fa il lavoro — in fretta, e senza intralci.", "f5.t": "Privato di default", "f5.b": "Niente pubblicità. Niente account. Niente tracciamento. Le segnalazioni di crash solo se le attivi tu.", "f6.t": "Su misura per te", "f6.b": "Chiaro, scuro o come il sistema. Dieci lingue integrate.", "fmt.eyebrow": "Formati", "fmt.title": "Apre quasi tutto.", "fmt.more": "& altro", "tune.eyebrow": "Discretamente tuo", "tune.title": "Impostazioni sensate, già pronte.", "tune.body": "Tema, lingua, regole di sovrascrittura e altro — regolati come preferisci. Dieci lingue, chiaro e scuro, e resta in disparte finché non ti serve.", "dl.eyebrow": "Come ottenerlo", "dl.title": "Gratis, o sostienici.", "dl.body": "Il download gratuito e la versione dello Store sono esattamente la stessa app. Scegli quella che preferisci.", "dl.free_title": "Download gratuito", "dl.free_tag": "Gratis", "dl.free_body": "Scarica direttamente da qui. Niente pubblicità, niente account, niente registrazioni.", "dl.free_btn": "Scarica gratis", "dl.free_foot": "Windows 11 · installer MSIX · aggiornamenti automatici", "dl.store_body": "Stessa app — acquistarla sullo Store serve solo a sostenere lo sviluppo. Gli aggiornamenti arrivano automaticamente dallo Store.", "dl.store_btn": "Scaricalo dal Microsoft Store", "dl.store_foot": "Sostiene lo sviluppo · grazie", "dl.note": "Le due versioni sono identiche e create dallo stesso sorgente. Se il browser mostra un avviso alla prima installazione, è normale per un'app scaricata direttamente.", "footer.privacy": "Privacy", "footer.tagline": "Lo strumento di archiviazione discreto per Windows."}
-};
-/* native language names for the picker; a language only appears once its dict exists */
-var LANG_NAMES = {en:"English",ko:"한국어",ja:"日本語",zh:"中文",de:"Deutsch",fr:"Français",es:"Español",pt:"Português",ru:"Русский",it:"Italiano"};
+    "hero.sub":"파일을 우클릭하면 압축, 아카이브를 우클릭하면 풀기. 앱을 열 일이 거의 없어요.",
+    "hero.cta_free":"무료 다운로드","hero.cta_store":"스토어에서 받기","hero.store_small":"다운로드",
 
-var OZ_DOWNLOAD_URL = "#"; /* set to the hosted MSIX/.appinstaller URL when ready */
+    "simple.eyebrow":"심플","simple.title":"하나만, 제대로.",
+    "simple.body":"모드도, 잡동사니도, 배울 것도 없어요. 창을 열어도 모든 게 예상한 자리에 있어요.",
+    "wedge.title":"광고 없음.<br>계정 없음.<br>추적 없음.",
+    "wedge.body":"번들도, 잔소리도, 가입도 없어요. 압축하고 풀고, 곧바로 비켜서요. 오류 보고는 철저히 선택이에요.",
+    "rust.eyebrow":"속도","rust.title":"네이티브 코어로, 조용히 빠르게.",
+    "rust.body":"엔진은 Rust로 만든 네이티브 코드. 할 일을 빠르게 끝내고, 기다리게 하지 않아요.",
+    "rust.compress":"압축","rust.extract":"해제",
+    "native.eyebrow":"네이티브 UI","native.title":"Windows 그대로의 모습.",
+    "native.body":"C#과 WinUI로 만든 진짜 네이티브 인터페이스예요. 창 속 웹페이지가 아니라, Fluent 디자인에 라이트도 다크도 열 개 언어도 자연스럽게 어울려요.",
+    "fmt.eyebrow":"지원 포맷","fmt.title":"웬만한 건 다 열려요.",
+    "fmt.body":"ZIP·7z·RAR·TAR 등 여러 포맷 — 필요하면 AES-256 암호화와 분할 압축까지.",
+    "dl.eyebrow":"받는 방법","dl.title":"무료로, 또는 후원으로.",
+    "dl.body":"무료 다운로드와 스토어 버전은 완전히 같은 앱이에요. 편한 쪽으로 받으세요.",
+    "dl.free_title":"무료 다운로드","dl.free_tag":"무료",
+    "dl.free_body":"홈페이지에서 바로 받기. 광고도, 계정도, 가입도 없어요.",
+    "dl.free_btn":"무료로 받기","dl.free_foot":"Windows 11 · MSIX 설치 · 자동 업데이트",
+    "dl.store_body":"앱은 완전히 동일해요. 스토어 구매는 순수하게 개발을 후원하는 방법입니다. 업데이트는 스토어로 자동 전달돼요.",
+    "dl.store_btn":"Microsoft Store에서 받기","dl.store_foot":"개발 후원 · 감사합니다",
+    "footer.privacy":"개인정보"
+  }
+};
+var LANG_NAMES = {en:"English",ko:"한국어"};
+// GitHub Releases 최신 에셋 직접 다운로드 URL
+// 릴리즈 시 에셋 파일명을 "OtterZip_x64.msix"로 통일해야 동작합니다.
+var OZ_DOWNLOAD_URL = "https://github.com/LumiBearStudio/OtterZip/releases/latest/download/OtterZip_x64.msix";
 
 function applyLang(l){
-  var dict = I18N[l] || I18N.en, en = I18N.en, els = document.querySelectorAll("[data-i18n]"), i, k, v;
-  for(i=0;i<els.length;i++){ k=els[i].getAttribute("data-i18n"); v=(k in dict)?dict[k]:en[k]; if(v!=null) els[i].innerHTML=v; }
-  document.title = dict["meta.title"]||en["meta.title"];
-  var md=document.querySelector('meta[name="description"]'); if(md) md.setAttribute("content", dict["meta.desc"]||en["meta.desc"]);
-  document.documentElement.lang = l;
-  var sel=document.getElementById("langsel"); if(sel) sel.value=l;
-  try{ localStorage.setItem("oz-lang", l); }catch(e){}
+  var d=I18N[l]||I18N.en,en=I18N.en,els=document.querySelectorAll("[data-i18n]"),i,k,v;
+  for(i=0;i<els.length;i++){k=els[i].getAttribute("data-i18n");v=(k in d)?d[k]:en[k];if(v!=null)els[i].innerHTML=v;}
+  document.title=d["meta.title"]||en["meta.title"];document.documentElement.lang=l;
+  var s=document.getElementById("langsel");if(s)s.value=l;
+  try{localStorage.setItem("oz-lang",l);}catch(e){}
 }
-function buildPicker(){
-  var sel=document.getElementById("langsel"); if(!sel) return;
-  sel.innerHTML="";
-  Object.keys(LANG_NAMES).forEach(function(code){
-    if(!I18N[code]) return; /* only offer languages we actually have */
-    var o=document.createElement("option"); o.value=code; o.textContent=LANG_NAMES[code]; sel.appendChild(o);
-  });
-  sel.onchange=function(){ applyLang(sel.value); };
-}
-function detectLang(){
-  try{ var s=localStorage.getItem("oz-lang"); if(s && I18N[s]) return s; }catch(e){}
-  var langs=navigator.languages||[navigator.language||"en"], i, l, base;
-  for(i=0;i<langs.length;i++){
-    l=(langs[i]||"").toLowerCase();
-    if(l.indexOf("zh")===0 && I18N.zh) return "zh";
-    if(l.indexOf("pt")===0 && I18N.pt) return "pt";
-    base=l.split("-")[0];
-    if(I18N[base]) return base;
-  }
-  return "en";
-}
+function buildPicker(){var s=document.getElementById("langsel");if(!s)return;s.innerHTML="";
+  Object.keys(LANG_NAMES).forEach(function(c){if(!I18N[c])return;var o=document.createElement("option");o.value=c;o.textContent=LANG_NAMES[c];s.appendChild(o);});
+  s.onchange=function(){applyLang(s.value);};}
+function detectLang(){try{var s=localStorage.getItem("oz-lang");if(s&&I18N[s])return s;}catch(e){}
+  var L=navigator.languages||[navigator.language||"en"],i,l;for(i=0;i<L.length;i++){l=(L[i]||"").toLowerCase();if(l.split("-")[0]==="ko"&&I18N.ko)return "ko";}return "en";}
 
-/* scroll reveal */
 function initReveal(){
   var els=document.querySelectorAll(".reveal");
-  if(!("IntersectionObserver" in window)){ for(var i=0;i<els.length;i++) els[i].classList.add("in"); return; }
-  var io=new IntersectionObserver(function(entries){
-    entries.forEach(function(en){ if(en.isIntersecting){ en.target.classList.add("in"); io.unobserve(en.target); } });
-  },{rootMargin:"0px 0px -8% 0px",threshold:.08});
-  els.forEach(function(el){ io.observe(el); });
+  if(!("IntersectionObserver" in window)){for(var i=0;i<els.length;i++)els[i].classList.add("in");document.getElementById("speedbar").classList.add("go");return;}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("in");io.unobserve(e.target);}});},{rootMargin:"0px 0px -8% 0px",threshold:.08});
+  els.forEach(function(el){io.observe(el);});
+  // start speed bars when they scroll in
+  var sb=document.getElementById("speedbar");
+  var io2=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add("go");}else{e.target.classList.remove("go");}});},{threshold:.4});
+  if(sb)io2.observe(sb);
 }
 
-(function init(){
-  buildPicker();
-  applyLang(detectLang());
-  if(OZ_DOWNLOAD_URL && OZ_DOWNLOAD_URL!=="#"){
-    var links=document.querySelectorAll("a[data-dl]"); for(var i=0;i<links.length;i++) links[i].setAttribute("href", OZ_DOWNLOAD_URL);
-  }
-  /* On Windows, open the Store app directly (ms-windows-store://) instead of the web page. */
+(function(){
+  buildPicker();applyLang(detectLang());
+  // nav border enhancement on scroll
+  var nav=document.querySelector("nav");
+  if(nav){window.addEventListener("scroll",function(){nav.style.borderColor=window.scrollY>10?"rgba(255,255,255,.18)":"rgba(255,255,255,.10)";},{passive:true});}
   var isWin=(navigator.userAgentData&&navigator.userAgentData.platform==="Windows")||/Windows NT/.test(navigator.userAgent||"");
-  if(isWin){
-    var st=document.querySelectorAll("a[data-store]");
-    for(var j=0;j<st.length;j++){ st[j].setAttribute("href","ms-windows-store://pdp/?productid=9NWQNGGSWJCL"); st[j].removeAttribute("target"); st[j].removeAttribute("rel"); }
-  }
-  if(document.readyState!=="loading") initReveal();
-  else document.addEventListener("DOMContentLoaded", initReveal);
+  if(isWin){var st=document.querySelectorAll("a[data-store]");for(var j=0;j<st.length;j++){st[j].setAttribute("href","ms-windows-store://pdp/?productid=9NWQNGGSWJCL");st[j].removeAttribute("target");st[j].removeAttribute("rel");}}
+  if(OZ_DOWNLOAD_URL&&OZ_DOWNLOAD_URL!=="#"){var dl=document.querySelectorAll("a[data-dl]");for(var i=0;i<dl.length;i++)dl[i].setAttribute("href",OZ_DOWNLOAD_URL);}
+  if(document.readyState!=="loading")initReveal();else document.addEventListener("DOMContentLoaded",initReveal);
 })();
 </script>
-
 </body>
 </html>
