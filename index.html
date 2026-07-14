@@ -1,0 +1,416 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OtterZip — the quiet archive tool for Windows</title>
+<meta name="description" content="OtterZip is a quiet, no-clutter archive tool for Windows. Compress and extract right from Explorer — ZIP, 7z, RAR, TAR and more, with AES-256 encryption and split archives. Free, no ads, no accounts, no tracking. Built on a Rust core.">
+<meta property="og:title" content="OtterZip — Zip. Done.">
+<meta property="og:description" content="A quiet, no-clutter archive tool for Windows. Right-click to compress or extract. Free · no ads · no accounts · no tracking.">
+<meta property="og:type" content="website">
+<link rel="icon" href="assets/otter.png">
+<script>
+  /* Set language before first paint to avoid a flash of the other language. */
+  (function(){
+    try{
+      var saved = localStorage.getItem('oz-lang');
+      var nav = (navigator.language || 'en').toLowerCase();
+      var lang = saved || (nav.indexOf('ko') === 0 ? 'ko' : 'en');
+      document.documentElement.lang = lang;
+      document.documentElement.setAttribute('data-lang', lang);
+    }catch(e){}
+  })();
+</script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{
+    --bg:#0b0e14; --ink:#eef2f7; --sub:#9aa4b2; --faint:#6b7481;
+    --accent:#5b8def; --accent2:#67d5df; --card:#141924; --border:#242c3a;
+    --maxw:1120px;
+  }
+  html{scroll-behavior:smooth}
+  body{
+    font-family:"Segoe UI Variable Display","Segoe UI",system-ui,-apple-system,"Malgun Gothic",sans-serif;
+    color:var(--ink); background:var(--bg); line-height:1.5; -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit;text-decoration:none}
+  img{max-width:100%;height:auto;display:block}
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
+  /* let grid/flex children shrink below their content's intrinsic width */
+  .hero .wrap>*,.explorer .wrap>*,.tune .wrap>*{min-width:0}
+  .grad{background:linear-gradient(92deg,#7ea6ff,#67d5df);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+  /* ---------- language toggle ---------- */
+  /* show only the active language; alternates carry lang="ko"/lang="en" */
+  :root[data-lang="en"] [lang="ko"]{display:none}
+  :root[data-lang="ko"] [lang="en"]{display:none}
+  .langtog{display:inline-flex;border:1px solid var(--border);border-radius:999px;overflow:hidden;background:var(--card)}
+  .langtog button{background:none;border:0;color:var(--sub);font:inherit;font-size:13px;font-weight:600;
+    padding:7px 13px;cursor:pointer;transition:background .12s ease,color .12s ease}
+  .langtog button.on{background:rgba(91,141,239,.18);color:#cfe0ff}
+  .langtog button:not(.on):hover{color:var(--ink)}
+
+  /* ---------- store / download buttons ---------- */
+  .store-btn{display:inline-flex;align-items:center;gap:12px;
+    background:linear-gradient(180deg,#3b7bf0,#2f6ae0);color:#fff;font-weight:600;
+    padding:14px 22px;border-radius:12px;font-size:17px;border:1px solid rgba(255,255,255,.14);
+    box-shadow:0 12px 30px rgba(59,123,240,.35);transition:transform .12s ease, box-shadow .12s ease;white-space:nowrap;cursor:pointer}
+  .store-btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(59,123,240,.45)}
+  .store-btn .win{display:grid;grid-template-columns:1fr 1fr;grid-gap:2px;width:22px;height:22px}
+  .store-btn .win i{background:#fff;border-radius:1px}
+  .store-btn small{display:block;font-weight:400;font-size:11px;opacity:.85;line-height:1.1}
+  .store-btn b{font-size:17px;line-height:1.1}
+  /* download (primary, teal-tinted) */
+  .dl-btn{display:inline-flex;align-items:center;gap:12px;
+    background:linear-gradient(180deg,#2fb8c6,#1f9aa8);color:#04222a;font-weight:700;
+    padding:14px 24px;border-radius:12px;font-size:17px;border:1px solid rgba(255,255,255,.18);
+    box-shadow:0 12px 30px rgba(47,184,198,.32);transition:transform .12s ease,box-shadow .12s ease;white-space:nowrap;cursor:pointer}
+  .dl-btn:hover{transform:translateY(-2px);box-shadow:0 16px 40px rgba(47,184,198,.42)}
+  .dl-btn svg{width:22px;height:22px}
+  /* ghost (secondary) */
+  .ghost{background:transparent;color:var(--ink);border:1px solid var(--border);box-shadow:none}
+  .ghost .win i{background:var(--sub)}
+  .ghost:hover{border-color:#3a4557;box-shadow:none}
+
+  /* ---------- nav ---------- */
+  nav{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);
+    background:rgba(11,14,20,.72);border-bottom:1px solid var(--border)}
+  nav .wrap{display:flex;align-items:center;height:66px;gap:14px}
+  .brand{display:flex;align-items:center;gap:12px}
+  .brand img{width:38px;height:38px;border-radius:10px}
+  .brand .wm{font-size:22px;font-weight:800;letter-spacing:-.5px}
+  .brand .wm b{color:#fff} .brand .wm span{color:var(--accent)}
+  nav .spacer{flex:1}
+  nav .dl-btn{padding:9px 16px;font-size:15px;box-shadow:none}
+  nav .dl-btn svg{width:18px;height:18px}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative;padding:72px 0 40px;
+    background:
+      radial-gradient(1100px 620px at 88% -6%, rgba(91,141,239,.20), transparent 60%),
+      radial-gradient(900px 700px at 4% 108%, rgba(87,199,212,.10), transparent 55%);}
+  .hero .wrap{display:grid;grid-template-columns:1.05fr .95fr;gap:40px;align-items:center}
+  .hero h1{font-size:76px;line-height:1.02;font-weight:800;letter-spacing:-2.5px;margin-bottom:22px}
+  :root[data-lang="ko"] .hero h1{letter-spacing:-2px}
+  .hero .tag{font-size:22px;color:var(--sub);max-width:520px;margin-bottom:18px}
+  .badges{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:30px}
+  .pill{font-size:14px;color:var(--sub);border:1px solid var(--border);background:var(--card);
+    padding:6px 12px;border-radius:999px}
+  .hero .cta{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+  .hero .by{font-size:14px;color:var(--faint)}
+  .shot{position:relative}
+  .shot img{width:100%;height:auto;border-radius:16px;
+    box-shadow:0 50px 120px rgba(0,0,0,.6),0 14px 40px rgba(0,0,0,.5);outline:1px solid rgba(255,255,255,.06)}
+  .shot .glow{position:absolute;inset:-8% -6%;z-index:-1;border-radius:50%;
+    background:radial-gradient(circle,rgba(91,141,239,.22),transparent 62%);filter:blur(26px)}
+
+  /* ---------- section ---------- */
+  section{padding:76px 0}
+  .eyebrow{font-size:14px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent2);margin-bottom:14px}
+  h2{font-size:40px;line-height:1.1;font-weight:800;letter-spacing:-1px;margin-bottom:16px}
+  .lead{font-size:19px;color:var(--sub);max-width:560px}
+
+  /* download section */
+  .download{background:radial-gradient(900px 460px at 50% -10%,rgba(47,184,198,.12),transparent 60%)}
+  .download .head{text-align:center;margin-bottom:44px}
+  .download .lead{margin:0 auto}
+  .dlcards{display:grid;grid-template-columns:1fr 1fr;gap:22px;max-width:860px;margin:0 auto;align-items:stretch}
+  .dlcard{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:32px 30px;display:flex;flex-direction:column}
+  .dlcard.free{border-color:rgba(47,184,198,.4);box-shadow:0 0 0 1px rgba(47,184,198,.12),0 20px 60px rgba(0,0,0,.3)}
+  .dlcard .kicker{display:flex;align-items:center;gap:10px;margin-bottom:6px}
+  .dlcard h3{font-size:24px;font-weight:800;letter-spacing:-.4px}
+  .dlcard .price{font-size:15px;font-weight:700;color:var(--accent2);border:1px solid rgba(103,213,223,.3);
+    background:rgba(103,213,223,.08);padding:2px 10px;border-radius:999px}
+  .dlcard .tagfree{font-size:15px;font-weight:700;color:#7fe6d6;border:1px solid rgba(47,184,198,.35);
+    background:rgba(47,184,198,.1);padding:2px 10px;border-radius:999px}
+  .dlcard p{font-size:15.5px;color:var(--sub);margin:8px 0 24px}
+  .dlcard .btnrow{margin-top:auto}
+  .dlcard .foot{font-size:13px;color:var(--faint);margin-top:14px}
+  .dlnote{max-width:860px;margin:26px auto 0;text-align:center;font-size:14px;color:var(--faint)}
+
+  /* explorer section */
+  .explorer .wrap{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:center}
+  .menuwrap{position:relative;display:flex;justify-content:center}
+  .menuwrap .glow{position:absolute;inset:0;z-index:-1;border-radius:50%;background:radial-gradient(circle,rgba(91,141,239,.18),transparent 62%);filter:blur(24px)}
+  .folder{display:flex;flex-direction:column;align-items:center;gap:8px;margin-right:-30px;align-self:flex-start;margin-top:34px}
+  .folder svg{width:88px;height:74px;filter:drop-shadow(0 12px 24px rgba(0,0,0,.5))}
+  .folder .nm{font-size:15px;background:rgba(91,141,239,.32);border:1px solid rgba(120,160,240,.6);padding:2px 12px;border-radius:6px}
+  .menu{background:#2b2b2b;border:1px solid rgba(255,255,255,.09);border-radius:12px;padding:6px;
+    box-shadow:0 40px 90px rgba(0,0,0,.6);align-self:flex-start;margin-top:12px}
+  .mi{display:flex;align-items:center;gap:13px;height:48px;padding:0 26px 0 12px;border-radius:7px;white-space:nowrap}
+  .mi img{width:26px;height:26px}
+  .mi .lbl{font-size:17px;color:#f2f3f5}
+  .mi.hot{background:rgba(255,255,255,.09)}
+
+  /* features */
+  .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:44px}
+  .fcard{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:26px}
+  .fcard .ic{width:48px;height:48px;border-radius:13px;display:flex;align-items:center;justify-content:center;margin-bottom:16px;
+    background:linear-gradient(140deg,rgba(91,141,239,.20),rgba(87,199,212,.14));border:1px solid rgba(120,160,240,.28);color:#9fc0ff}
+  .fcard .ic svg{width:25px;height:25px}
+  .fcard h3{font-size:20px;font-weight:700;margin-bottom:8px}
+  .fcard p{font-size:15.5px;color:var(--sub)}
+
+  /* formats strip */
+  .formats{background:var(--card);border-top:1px solid var(--border);border-bottom:1px solid var(--border)}
+  .formats .row{display:flex;flex-wrap:wrap;gap:10px;margin-top:22px}
+  .fmt{font-size:14px;font-weight:600;color:#cdd6e4;border:1px solid var(--border);background:#0f141d;padding:7px 13px;border-radius:9px}
+
+  /* tune section */
+  .tune .wrap{display:grid;grid-template-columns:.95fr 1.05fr;gap:48px;align-items:center}
+
+  /* big statement */
+  .statement{text-align:center;
+    background:radial-gradient(900px 400px at 50% 40%,rgba(91,141,239,.16),transparent 62%)}
+  .statement h2{font-size:52px;letter-spacing:-1.5px;margin:0 auto 20px;max-width:760px}
+  .statement .lead{margin:0 auto 34px}
+  .statement .cta{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+
+  /* footer */
+  footer{border-top:1px solid var(--border);padding:44px 0;color:var(--faint);font-size:14px}
+  footer .wrap{display:flex;flex-wrap:wrap;align-items:center;gap:18px}
+  footer .spacer{flex:1}
+  footer a{color:var(--sub)} footer a:hover{color:var(--ink)}
+
+  /* ---------- responsive ---------- */
+  @media(max-width:860px){
+    .hero{padding:44px 0 20px}
+    .hero .wrap,.explorer .wrap,.tune .wrap{grid-template-columns:1fr;gap:30px}
+    .hero h1{font-size:52px}
+    .tune .shot{order:-1}
+    h2{font-size:32px}
+    .feat-grid{grid-template-columns:1fr;gap:14px}
+    .dlcards{grid-template-columns:1fr}
+    .statement h2{font-size:36px}
+    section{padding:56px 0}
+    .folder{margin-right:-20px}
+  }
+</style>
+</head>
+<body>
+
+<nav><div class="wrap">
+  <div class="brand"><img src="assets/otter.png" alt="OtterZip"><div class="wm"><b>Otter</b><span>Zip</span></div></div>
+  <div class="spacer"></div>
+  <div class="langtog" role="group" aria-label="Language">
+    <button type="button" data-setlang="ko" onclick="ozSetLang('ko')">한국어</button>
+    <button type="button" data-setlang="en" onclick="ozSetLang('en')">English</button>
+  </div>
+  <a class="dl-btn" href="#download">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+    <span lang="en">Download free</span><span lang="ko">무료 다운로드</span></a>
+</div></nav>
+
+<header class="hero"><div class="wrap">
+  <div>
+    <h1><span lang="en">Zip. <span class="grad">Done.</span></span><span lang="ko">압축은 <span class="grad">간단하게.</span></span></h1>
+    <p class="tag">
+      <span lang="en">No ads, no bundles, no nagging. Just compress and extract &mdash; a simple archive tool for Windows.</span>
+      <span lang="ko">광고도, 번들도, 잔소리도 없어요. 그냥 압축하고 푸는, 단순한 Windows 압축 도구.</span>
+    </p>
+    <div class="badges">
+      <span class="pill"><span lang="en">Free</span><span lang="ko">무료</span></span>
+      <span class="pill"><span lang="en">No ads</span><span lang="ko">광고 없음</span></span>
+      <span class="pill"><span lang="en">No accounts</span><span lang="ko">계정 없음</span></span>
+      <span class="pill"><span lang="en">No tracking</span><span lang="ko">추적 없음</span></span>
+      <span class="pill">Windows 11</span>
+    </div>
+    <div class="cta">
+      <a class="dl-btn" href="#download">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+        <span lang="en">Download free</span><span lang="ko">무료 다운로드</span></a>
+      <a class="store-btn ghost" href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+        <span class="win"><i></i><i></i><i></i><i></i></span>
+        <span><small><span lang="en">Or support us on the</span><span lang="ko">또는 후원하기</span></small><b>Microsoft Store</b></span></a>
+    </div>
+    <p class="by" style="margin-top:16px">by LumiBear Studio</p>
+  </div>
+  <div class="shot"><div class="glow"></div><img src="assets/window.png" alt="OtterZip main window"></div>
+</div></header>
+
+<section class="download" id="download"><div class="wrap">
+  <div class="head">
+    <div class="eyebrow"><span lang="en">How to get it</span><span lang="ko">받는 방법</span></div>
+    <h2><span lang="en">Free, or support us.</span><span lang="ko">무료로, 또는 후원으로.</span></h2>
+    <p class="lead">
+      <span lang="en">The free download and the Store version are the exact same app. Pick whichever suits you.</span>
+      <span lang="ko">무료 다운로드와 스토어 버전은 완전히 같은 앱이에요. 편한 쪽으로 받으세요.</span>
+    </p>
+  </div>
+  <div class="dlcards">
+    <div class="dlcard free">
+      <div class="kicker">
+        <h3><span lang="en">Free download</span><span lang="ko">무료 다운로드</span></h3>
+        <span class="tagfree"><span lang="en">Free</span><span lang="ko">무료</span></span>
+      </div>
+      <p>
+        <span lang="en">Download straight from here. No ads, no account, nothing to sign up for.</span>
+        <span lang="ko">홈페이지에서 바로 받기. 광고도, 계정도, 가입도 없어요.</span>
+      </p>
+      <div class="btnrow">
+        <a class="dl-btn" data-dl href="#">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+          <span lang="en">Get it free</span><span lang="ko">무료로 받기</span></a>
+      </div>
+      <p class="foot"><span lang="en">Windows 11 · MSIX installer · auto-updates</span><span lang="ko">Windows 11 · MSIX 설치 · 자동 업데이트</span></p>
+    </div>
+    <div class="dlcard">
+      <div class="kicker">
+        <h3>Microsoft Store</h3>
+        <span class="price">US$3</span>
+      </div>
+      <p>
+        <span lang="en">Same app — buying it on the Store is simply a way to support development. Updates arrive through the Store automatically.</span>
+        <span lang="ko">앱은 완전히 동일해요. 스토어 구매는 순수하게 개발을 후원하는 방법입니다. 업데이트는 스토어로 자동 전달돼요.</span>
+      </p>
+      <div class="btnrow">
+        <a class="store-btn" href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+          <span class="win"><i></i><i></i><i></i><i></i></span>
+          <span><small><span lang="en">Get it from the</span><span lang="ko">받기</span></small><b>Microsoft Store</b></span></a>
+      </div>
+      <p class="foot"><span lang="en">Supports development · thank you</span><span lang="ko">개발 후원 · 감사합니다</span></p>
+    </div>
+  </div>
+  <p class="dlnote">
+    <span lang="en">Both versions are identical and built from the same source. If your browser warns on first install, that's expected for a directly-downloaded app — see the install guide.</span>
+    <span lang="ko">두 버전은 같은 소스로 만든 동일한 앱이에요. 직접 받은 앱은 첫 설치 시 안내 창이 뜰 수 있어요 — 설치 방법을 참고하세요.</span>
+  </p>
+</div></section>
+
+<section class="explorer"><div class="wrap">
+  <div>
+    <div class="eyebrow"><span lang="en">Right from Explorer</span><span lang="ko">탐색기에서 바로</span></div>
+    <h2><span lang="en">You barely open the app.</span><span lang="ko">앱을 열 일이 거의 없어요.</span></h2>
+    <p class="lead">
+      <span lang="en">Right-click any file to compress it. Right-click any archive to extract it. Most of the time, OtterZip works entirely from the menu you already use.</span>
+      <span lang="ko">파일을 우클릭해 압축하고, 아카이브를 우클릭해 풀어요. 대부분은 이미 쓰던 그 메뉴만으로 끝나요.</span>
+    </p>
+  </div>
+  <div class="menuwrap">
+    <div class="glow"></div>
+    <div class="folder">
+      <svg viewBox="0 0 120 100"><defs><linearGradient id="fld" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7fa8dd"/><stop offset="1" stop-color="#5b83bd"/></linearGradient></defs>
+        <path d="M8 24 h34 l10 10 h52 a6 6 0 0 1 6 6 v46 a6 6 0 0 1 -6 6 H8 a6 6 0 0 1 -6 -6 V30 a6 6 0 0 1 6 -6 z" fill="#4d6ea6"/>
+        <path d="M6 40 h108 a4 4 0 0 1 4 4 v42 a6 6 0 0 1 -6 6 H8 a6 6 0 0 1 -6 -6 V44 a4 4 0 0 1 4 -4 z" fill="url(#fld)"/></svg>
+      <div class="nm">Reports</div>
+    </div>
+    <div class="menu">
+      <div class="mi hot"><img src="assets/otter.png" alt=""><span class="lbl"><span lang="en">Compress with OtterZip&hellip;</span><span lang="ko">OtterZip으로 압축&hellip;</span></span></div>
+      <div class="mi"><img src="assets/otter.png" alt=""><span class="lbl"><span lang="en">Compress to Reports.7z</span><span lang="ko">Reports.7z로 압축</span></span></div>
+      <div class="mi"><img src="assets/otter.png" alt=""><span class="lbl"><span lang="en">Compress to Reports.zip</span><span lang="ko">Reports.zip로 압축</span></span></div>
+    </div>
+  </div>
+</div></section>
+
+<section><div class="wrap">
+  <div class="eyebrow"><span lang="en">Everything you need</span><span lang="ko">필요한 건 다</span></div>
+  <h2><span lang="en">Small app. Full toolbox.</span><span lang="ko">작은 앱, 알찬 도구함.</span></h2>
+  <div class="feat-grid">
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7l8-4 8 4v10l-8 4-8-4z"/><path d="M4 7l8 4 8-4M12 11v10"/></svg></div>
+      <h3><span lang="en">Every common format</span><span lang="ko">필요한 포맷 전부</span></h3>
+      <p><span lang="en">Create ZIP, 7z, TAR and TAR.GZ. Extract those plus RAR, GZ, BZ2, XZ, ISO and more.</span><span lang="ko">ZIP·7z·TAR·TAR.GZ를 만들고, 여기에 RAR·GZ·BZ2·XZ·ISO까지 풀어요.</span></p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2.2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg></div>
+      <h3><span lang="en">Encrypt &amp; split</span><span lang="ko">암호화 &amp; 분할</span></h3>
+      <p><span lang="en">Lock archives with AES-256. Split large archives into multiple volumes.</span><span lang="ko">AES-256으로 아카이브를 잠그고, 큰 파일은 여러 볼륨으로 나눠요.</span></p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3h6l1 4H8zM8 7h8v13a1 1 0 0 1-1 1H9a1 1 0 0 1-1-1z"/><path d="M12 11v5"/></svg></div>
+      <h3><span lang="en">Right-click integration</span><span lang="ko">우클릭 통합</span></h3>
+      <p><span lang="en">Compress and extract from the Explorer menu &mdash; no window to open first.</span><span lang="ko">탐색기 메뉴에서 바로 압축·해제 &mdash; 창을 먼저 열 필요가 없어요.</span></p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></div>
+      <h3><span lang="en">Built for speed</span><span lang="ko">빠르게</span></h3>
+      <p><span lang="en">A native Rust core does the work &mdash; quickly, and out of your way.</span><span lang="ko">네이티브 Rust 코어가 조용하고 빠르게 처리해요.</span></p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+      <h3><span lang="en">Private by default</span><span lang="ko">기본이 프라이버시</span></h3>
+      <p><span lang="en">No ads. No accounts. No tracking. Crash reports are strictly opt-in.</span><span lang="ko">광고·계정·추적 없음. 오류 보고는 동의할 때만 보냅니다.</span></p>
+    </div>
+    <div class="fcard">
+      <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/></svg></div>
+      <h3><span lang="en">Yours to tune</span><span lang="ko">당신에게 맞춰</span></h3>
+      <p><span lang="en">Light, dark, or follow system. Ten languages built in.</span><span lang="ko">라이트·다크·시스템 테마. 10개 언어 내장.</span></p>
+    </div>
+  </div>
+</div></section>
+
+<section class="formats"><div class="wrap">
+  <div class="eyebrow"><span lang="en">Formats</span><span lang="ko">지원 포맷</span></div>
+  <h2><span lang="en">Open just about anything.</span><span lang="ko">웬만한 건 다 열어요.</span></h2>
+  <div class="row">
+    <span class="fmt">ZIP</span><span class="fmt">7z</span><span class="fmt">RAR</span><span class="fmt">TAR</span>
+    <span class="fmt">TAR.GZ</span><span class="fmt">TAR.BZ2</span><span class="fmt">TAR.XZ</span><span class="fmt">GZ</span>
+    <span class="fmt">BZ2</span><span class="fmt">XZ</span><span class="fmt">ZST</span><span class="fmt">LZ4</span>
+    <span class="fmt">JAR</span><span class="fmt">APK</span><span class="fmt">IPA</span><span class="fmt">ISO</span>
+    <span class="fmt">IMG</span><span class="fmt">CAB</span><span class="fmt">DEB</span><span class="fmt"><span lang="en">&amp; more</span><span lang="ko">그 외 다수</span></span>
+  </div>
+</div></section>
+
+<section class="tune"><div class="wrap">
+  <div>
+    <div class="eyebrow"><span lang="en">Quietly yours</span><span lang="ko">조용히, 당신 방식대로</span></div>
+    <h2><span lang="en">Sensible defaults, out of the box.</span><span lang="ko">기본값부터 잘 잡혀 있어요.</span></h2>
+    <p class="lead">
+      <span lang="en">Theme, language, overwrite rules and more &mdash; tuned however you like. Ten languages, light and dark, and it stays out of the way until you need it.</span>
+      <span lang="ko">테마·언어·덮어쓰기 규칙까지 원하는 대로. 10개 언어, 라이트·다크, 그리고 필요할 때까지 조용히 비켜 있어요.</span>
+    </p>
+  </div>
+  <div class="shot"><div class="glow"></div><img src="assets/settings.png" alt="OtterZip settings"></div>
+</div></section>
+
+<section class="statement"><div class="wrap">
+  <h2><span lang="en">Free. No ads. No accounts.<br><span class="grad">No tracking.</span></span><span lang="ko">무료. 광고 없음. 계정 없음.<br><span class="grad">추적 없음.</span></span></h2>
+  <p class="lead"><span lang="en">The archive tool that just compresses and extracts &mdash; and then gets out of your way.</span><span lang="ko">압축하고 풀기만 하고, 곧바로 비켜서는 압축 도구.</span></p>
+  <div class="cta">
+    <a class="dl-btn" href="#download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span lang="en">Download free</span><span lang="ko">무료 다운로드</span></a>
+    <a class="store-btn ghost" href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+      <span class="win"><i></i><i></i><i></i><i></i></span>
+      <span><small><span lang="en">Or support us on the</span><span lang="ko">또는 후원하기</span></small><b>Microsoft Store</b></span></a>
+  </div>
+</div></section>
+
+<footer><div class="wrap">
+  <div class="brand"><img src="assets/otter.png" alt="" style="width:30px;height:30px;border-radius:8px"><div class="wm" style="font-size:18px"><b>Otter</b><span>Zip</span></div></div>
+  <div class="spacer"></div>
+  <a href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">Microsoft Store</a>
+  <a href="privacy.html"><span lang="en">Privacy</span><span lang="ko">개인정보</span></a>
+  <span>&copy; 2026 LumiBear Studio</span>
+</div></footer>
+
+<script>
+  /* Language toggle: single source of truth is <html data-lang>. CSS shows the
+     matching lang="" spans; this just flips the attribute + persists the choice. */
+  function ozSetLang(l){
+    var root = document.documentElement;
+    root.setAttribute('data-lang', l);
+    root.lang = l;
+    try{ localStorage.setItem('oz-lang', l); }catch(e){}
+    var btns = document.querySelectorAll('.langtog button');
+    for(var i=0;i<btns.length;i++){ btns[i].classList.toggle('on', btns[i].getAttribute('data-setlang')===l); }
+    document.title = (l==='ko')
+      ? 'OtterZip — 조용한 Windows 압축 도구'
+      : 'OtterZip — the quiet archive tool for Windows';
+  }
+
+  /* Single place to set the free-download link once the signed MSIX/.appinstaller
+     is hosted. Leave as '#' until then. Example: 'https://github.com/<org>/OtterZip/releases/latest' */
+  var OZ_DOWNLOAD_URL = '#';
+  (function(){
+    ozSetLang(document.documentElement.getAttribute('data-lang') || 'en');
+    if(OZ_DOWNLOAD_URL && OZ_DOWNLOAD_URL !== '#'){
+      var links = document.querySelectorAll('a[data-dl]');
+      for(var i=0;i<links.length;i++){ links[i].setAttribute('href', OZ_DOWNLOAD_URL); }
+    }
+  })();
+</script>
+
+</body>
+</html>
