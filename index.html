@@ -3,6 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
 <title>OtterZip — the quiet archive tool for Windows</title>
 <meta name="description" content="A quiet, no-clutter archive tool for Windows. Compress and extract right from Explorer — ZIP, 7z, RAR, TAR and more, with AES-256 encryption and split archives. Free, no ads, no accounts, no tracking.">
 <meta property="og:title" content="OtterZip — Zip. Done.">
@@ -12,8 +13,8 @@
 <style>
   *{margin:0;padding:0;box-sizing:border-box}
   :root{
-    --bg:#fbfbfd; --panel:#f5f5f7; --ink:#1d1d1f; --sub:#6e6e73; --faint:#86868b;
-    --line:#e3e3e6; --accent:#2f6ae0; --accent2:#1f9aa8; --ink-dark:#f5f5f7;
+    --bg:#000000; --panel:#111114; --card:#1a1a1d; --ink:#f5f5f7; --sub:#a1a1a6; --faint:#6e6e73;
+    --line:rgba(255,255,255,.12); --accent:#4d7cff; --accent2:#3fd6e0; --ink-dark:#f5f5f7;
     --maxw:1000px; --wide:1180px;
     --ease:cubic-bezier(.16,1,.3,1);
   }
@@ -27,7 +28,7 @@
   img{max-width:100%;height:auto;display:block}
   .wrap{max-width:var(--maxw);margin:0 auto;padding:0 24px}
   .wide{max-width:var(--wide);margin:0 auto;padding:0 24px}
-  .grad{background:linear-gradient(96deg,#2f6ae0,#1f9aa8);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .grad{background:linear-gradient(96deg,#6ea0ff,#3fe0ea);-webkit-background-clip:text;background-clip:text;color:transparent}
 
   /* reveal on scroll (Apple-style) */
   @media (prefers-reduced-motion:no-preference){
@@ -40,9 +41,9 @@
     font-size:17px;padding:12px 24px;transition:transform .18s var(--ease),background .18s,opacity .18s;white-space:nowrap;cursor:pointer;line-height:1.2}
   .btn:active{transform:scale(.97)}
   .btn-fill{background:var(--accent);color:#fff}
-  .btn-fill:hover{background:#255ad0}
-  .btn-soft{background:rgba(0,0,0,.05);color:var(--ink)}
-  .btn-soft:hover{background:rgba(0,0,0,.09)}
+  .btn-fill:hover{background:#6b91ff}
+  .btn-soft{background:rgba(255,255,255,.10);color:var(--ink)}
+  .btn-soft:hover{background:rgba(255,255,255,.16)}
   .btn-link{color:var(--accent);font-size:17px;font-weight:500;display:inline-flex;align-items:center;gap:5px}
   .btn-link:hover{text-decoration:underline}
   .btn svg{width:19px;height:19px}
@@ -51,7 +52,7 @@
 
   /* nav */
   nav{position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
-    background:rgba(251,251,253,.82);border-bottom:1px solid rgba(0,0,0,.07)}
+    background:rgba(0,0,0,.72);border-bottom:1px solid rgba(255,255,255,.10)}
   nav .wide{display:flex;align-items:center;height:52px;gap:16px}
   .brand{display:flex;align-items:center;gap:10px}
   .brand img{width:29px;height:29px;border-radius:8px}
@@ -74,7 +75,7 @@
   .hero-by{font-size:14px;color:var(--faint);margin-top:14px}
   .hero-shot{max-width:var(--wide);margin:60px auto 0;padding:0 24px}
   .hero-shot .frame{position:relative;border-radius:20px;overflow:hidden;
-    box-shadow:0 30px 80px rgba(0,0,0,.18),0 8px 24px rgba(0,0,0,.10);border:1px solid rgba(0,0,0,.06)}
+    box-shadow:0 30px 90px rgba(0,0,0,.6);border:1px solid rgba(255,255,255,.10)}
   .hero-shot img{width:100%;display:block}
 
   /* generic section */
@@ -85,7 +86,7 @@
   .sec-body{font-size:clamp(18px,2.2vw,21px);line-height:1.45;color:var(--sub);margin-top:18px}
 
   /* dark statement (full-bleed) */
-  .dark{background:#000;color:var(--ink-dark);text-align:center}
+  .dark{background:radial-gradient(760px 420px at 50% 26%,rgba(77,124,255,.18),transparent 60%),#000;color:var(--ink-dark);text-align:center}
   .dark h2{font-size:clamp(40px,7vw,80px);letter-spacing:-.03em;color:#fff}
   .dark .sec-body{color:#a1a1a6;max-width:620px;margin:22px auto 0}
 
@@ -97,7 +98,7 @@
   .menuwrap .halo{position:absolute;inset:6% 10%;background:radial-gradient(circle,rgba(47,106,224,.14),transparent 66%);filter:blur(30px);z-index:0}
   .folder{display:flex;flex-direction:column;align-items:center;gap:8px;margin-right:-26px;align-self:flex-start;margin-top:30px;position:relative;z-index:1}
   .folder svg{width:80px;height:68px;filter:drop-shadow(0 12px 22px rgba(0,0,0,.16))}
-  .folder .nm{font-size:14px;background:rgba(47,106,224,.14);border:1px solid rgba(47,106,224,.3);color:#2f6ae0;padding:2px 12px;border-radius:6px}
+  .folder .nm{font-size:14px;background:rgba(77,124,255,.18);border:1px solid rgba(77,124,255,.4);color:#8fb0ff;padding:2px 12px;border-radius:6px}
   .menu{background:#2b2b2b;border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:6px;
     box-shadow:0 30px 70px rgba(0,0,0,.30);align-self:flex-start;margin-top:10px;position:relative;z-index:1}
   .mi{display:flex;align-items:center;gap:12px;height:46px;padding:0 24px 0 12px;border-radius:7px;white-space:nowrap}
@@ -107,7 +108,7 @@
 
   /* features grid */
   .feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;margin-top:64px;max-width:var(--wide)}
-  .fcard{background:#fff;border:1px solid var(--line);border-radius:22px;padding:32px}
+  .fcard{background:var(--card);border:1px solid var(--line);border-radius:22px;padding:32px}
   .fcard .ic{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;margin-bottom:20px;
     background:linear-gradient(140deg,rgba(47,106,224,.12),rgba(31,154,168,.12));color:var(--accent)}
   .fcard .ic svg{width:27px;height:27px}
@@ -117,20 +118,20 @@
   /* formats */
   .formats{background:var(--panel)}
   .chips{display:flex;flex-wrap:wrap;gap:11px;justify-content:center;max-width:760px;margin:44px auto 0}
-  .chip{font-size:15px;font-weight:600;color:var(--ink);background:#fff;border:1px solid var(--line);padding:9px 16px;border-radius:12px}
+  .chip{font-size:15px;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);padding:9px 16px;border-radius:12px}
 
   /* tune */
   .tune .split{align-items:center}
-  .tune .shot .frame{border-radius:20px;overflow:hidden;box-shadow:0 24px 60px rgba(0,0,0,.16);border:1px solid rgba(0,0,0,.06)}
+  .tune .shot .frame{border-radius:20px;overflow:hidden;box-shadow:0 24px 70px rgba(0,0,0,.55);border:1px solid rgba(255,255,255,.10)}
 
   /* download */
   .dlcards{display:grid;grid-template-columns:1fr 1fr;gap:24px;max-width:900px;margin:56px auto 0;align-items:stretch}
-  .dlcard{background:#fff;border:1px solid var(--line);border-radius:24px;padding:36px 34px;display:flex;flex-direction:column;text-align:left}
-  .dlcard.free{border-color:rgba(31,154,168,.5);box-shadow:0 0 0 1px rgba(31,154,168,.12),0 20px 50px rgba(0,0,0,.06)}
+  .dlcard{background:var(--card);border:1px solid var(--line);border-radius:24px;padding:36px 34px;display:flex;flex-direction:column;text-align:left}
+  .dlcard.free{border-color:rgba(63,214,224,.5);box-shadow:0 0 0 1px rgba(63,214,224,.14),0 20px 50px rgba(0,0,0,.4)}
   .dlcard .kick{display:flex;align-items:center;gap:10px;margin-bottom:8px}
   .dlcard h3{font-size:25px;font-weight:700;letter-spacing:-.01em}
   .dlcard .badge{font-size:14px;font-weight:700;padding:3px 11px;border-radius:980px}
-  .dlcard .badge.f{color:#0a7d6f;background:rgba(31,154,168,.12);border:1px solid rgba(31,154,168,.3)}
+  .dlcard .badge.f{color:#4fd6c4;background:rgba(63,214,224,.14);border:1px solid rgba(63,214,224,.35)}
   .dlcard .badge.p{color:var(--accent);background:rgba(47,106,224,.1);border:1px solid rgba(47,106,224,.28)}
   .dlcard p.d{font-size:16px;color:var(--sub);margin:10px 0 26px;line-height:1.5}
   .dlcard .btnrow{margin-top:auto}
