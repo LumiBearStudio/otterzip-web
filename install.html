@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en" data-lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#000000">
+<meta name="robots" content="noindex">
+<title>OtterZip — How to install</title>
+<link rel="icon" href="assets/otter.png">
+<script>
+  (function(){try{var s=localStorage.getItem('oz-lang');var n=(navigator.language||'en').toLowerCase();var l=s||(n.indexOf('ko')===0?'ko':'en');document.documentElement.lang=l;document.documentElement.setAttribute('data-lang',l);}catch(e){}})();
+</script>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  :root{--bg:#000;--panel:#111114;--card:#1a1a1d;--ink:#f5f5f7;--sub:#a1a1a6;--faint:#6e6e73;--line:rgba(255,255,255,.12);--accent:#4d7cff;--accent2:#3fd6e0}
+  :root[data-lang="en"] [lang="ko"]{display:none}
+  :root[data-lang="ko"] [lang="en"]{display:none}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI Variable Display","Segoe UI",system-ui,"Malgun Gothic","Apple SD Gothic Neo",sans-serif;
+    background:var(--bg);color:var(--ink);line-height:1.6;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:720px;margin:0 auto;padding:0 24px}
+  nav{border-bottom:1px solid var(--line);position:sticky;top:0;background:rgba(0,0,0,.72);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);z-index:10}
+  nav .wrap{display:flex;align-items:center;height:54px;gap:14px}
+  .brand{display:flex;align-items:center;gap:10px}.brand img{width:27px;height:27px;border-radius:7px}
+  .brand b{font-size:18px;font-weight:700}
+  nav .spacer{flex:1}
+  .home{font-size:14px;color:var(--sub)}.home:hover{color:var(--ink)}
+  .langtog{display:inline-flex;border:1px solid var(--line);border-radius:999px;overflow:hidden}
+  .langtog button{background:none;border:0;color:var(--sub);font:inherit;font-size:12.5px;font-weight:600;padding:6px 12px;cursor:pointer}
+  .langtog button.on{background:rgba(77,124,255,.2);color:#cfe0ff}
+  header{padding:64px 0 8px;text-align:center}
+  h1{font-size:clamp(34px,7vw,52px);font-weight:700;letter-spacing:-.02em;line-height:1.1}
+  .lead{color:var(--sub);font-size:18px;margin-top:14px}
+  main{padding:40px 0 80px}
+  ol{list-style:none;counter-reset:s;margin:0}
+  li{counter-increment:s;position:relative;padding:0 0 24px 56px;min-height:44px}
+  li::before{content:counter(s);position:absolute;left:0;top:0;width:38px;height:38px;border-radius:50%;
+    background:linear-gradient(140deg,rgba(77,124,255,.2),rgba(63,214,224,.14));border:1px solid rgba(77,124,255,.35);
+    color:#9fc0ff;font-weight:700;display:flex;align-items:center;justify-content:center;font-size:17px}
+  li h3{font-size:19px;font-weight:600;margin-bottom:4px}
+  li p{color:var(--sub);font-size:15.5px}
+  code{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:2px 7px;font-size:14px;font-family:"Cascadia Code",Consolas,monospace}
+  .note{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px 24px;margin-top:36px;color:var(--sub);font-size:15px}
+  .note b{color:var(--ink)}
+  .store{display:inline-flex;align-items:center;gap:8px;margin-top:16px;color:var(--accent);font-weight:600;font-size:15px}
+  .store:hover{text-decoration:underline}
+  footer{border-top:1px solid var(--line);padding:28px 0;color:var(--faint);font-size:13px;text-align:center}
+</style>
+</head>
+<body>
+<nav><div class="wrap">
+  <a class="brand" href="index.html"><img src="assets/otter.png" alt="OtterZip"><b>OtterZip</b></a>
+  <div class="spacer"></div>
+  <a class="home" href="index.html"><span lang="en">← Home</span><span lang="ko">← 홈</span></a>
+  <div class="langtog">
+    <button type="button" data-l="ko" onclick="ozLang('ko')">한국어</button>
+    <button type="button" data-l="en" onclick="ozLang('en')">English</button>
+  </div>
+</div></nav>
+
+<header><div class="wrap">
+  <h1><span lang="en">How to install</span><span lang="ko">설치 방법</span></h1>
+  <p class="lead">
+    <span lang="en">The free direct download, installed in a few clicks.</span>
+    <span lang="ko">무료 직접 다운로드, 몇 번의 클릭으로 설치합니다.</span>
+  </p>
+</div></header>
+
+<main><div class="wrap">
+  <ol>
+    <li>
+      <h3><span lang="en">Extract the zip</span><span lang="ko">압축(zip)을 풉니다</span></h3>
+      <p><span lang="en">Unzip the downloaded <code>OtterZip_x64_installer.zip</code> into any folder.</span><span lang="ko">받은 <code>OtterZip_x64_installer.zip</code>을 아무 폴더에나 풉니다.</span></p>
+    </li>
+    <li>
+      <h3><span lang="en">Right-click <code>Install.ps1</code> → Run with PowerShell</span><span lang="ko"><code>Install.ps1</code> 우클릭 → PowerShell에서 실행</span></h3>
+      <p><span lang="en">Inside the extracted folder, right-click the <code>Install.ps1</code> file and choose "Run with PowerShell".</span><span lang="ko">푼 폴더 안의 <code>Install.ps1</code>을 오른쪽 클릭하고 "PowerShell에서 실행"을 선택합니다.</span></p>
+    </li>
+    <li>
+      <h3><span lang="en">Click "Yes" on the prompt</span><span lang="ko">권한 창에서 "예"를 누릅니다</span></h3>
+      <p><span lang="en">A User Account Control (UAC) window appears. Click "Yes" — on the first install it registers the app's publisher certificate as trusted, one time.</span><span lang="ko">사용자 계정 컨트롤(UAC) 창이 뜨면 "예"를 누릅니다. 처음 설치할 때 앱 게시자 인증서를 신뢰 목록에 1회 등록합니다.</span></p>
+    </li>
+    <li>
+      <h3><span lang="en">Done — launch from Start</span><span lang="ko">끝 — 시작 메뉴에서 실행</span></h3>
+      <p><span lang="en">OtterZip is installed. Open it from the Start menu, or just right-click any file in Explorer.</span><span lang="ko">설치 완료. 시작 메뉴에서 열거나, 탐색기에서 파일을 우클릭하면 바로 쓸 수 있어요.</span></p>
+    </li>
+  </ol>
+
+  <div class="note">
+    <p><span lang="en"><b>Why the certificate step?</b> The direct download is signed by us (LumiBear Studio), not by the Microsoft Store. Windows asks you to trust our signature once — that is what the UAC prompt does. It is the exact same app as the Store version: no ads, no accounts, no tracking.</span><span lang="ko"><b>인증서 단계가 왜 있나요?</b> 직접 다운로드판은 Microsoft Store가 아니라 저희(LumiBear Studio)가 직접 서명합니다. Windows가 그 서명을 한 번 신뢰해달라고 묻는 것이 UAC 창입니다. 스토어 버전과 완전히 같은 앱이며 광고·계정·추적이 없습니다.</span></p>
+    <a class="store" href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+      <span lang="en">Prefer no certificate step? Get it from the Microsoft Store →</span><span lang="ko">인증서 단계 없이? Microsoft Store에서 받기 →</span></a>
+  </div>
+</div></main>
+
+<footer><div class="wrap">&copy; 2026 LumiBear Studio</div></footer>
+
+<script>
+  function ozLang(l){var r=document.documentElement;r.setAttribute('data-lang',l);r.lang=l;try{localStorage.setItem('oz-lang',l);}catch(e){}
+    var b=document.querySelectorAll('.langtog button');for(var i=0;i<b.length;i++)b[i].classList.toggle('on',b[i].getAttribute('data-l')===l);
+    document.title=l==='ko'?'OtterZip — 설치 방법':'OtterZip — How to install';}
+  ozLang(document.documentElement.getAttribute('data-lang')||'en');
+</script>
+</body>
+</html>
