@@ -32,6 +32,14 @@
   .btn-link{color:var(--accent);font-size:17px;font-weight:500;display:inline-flex;align-items:center;gap:5px;white-space:nowrap}
   .btn-link:hover{text-decoration:underline}
   .btn svg,.btn-link svg{width:19px;height:19px}
+  .store-btn{display:inline-flex;align-items:center;gap:11px;background:rgba(255,255,255,.10);color:var(--ink);border:1px solid var(--line);border-radius:980px;padding:8px 20px;transition:background .18s var(--ease),transform .18s var(--ease);white-space:nowrap;cursor:pointer}
+  .store-btn:hover{background:rgba(255,255,255,.16)}
+  .store-btn:active{transform:scale(.97)}
+  .store-btn .win{display:grid;grid-template-columns:1fr 1fr;gap:2px;width:19px;height:19px;flex:none}
+  .store-btn .win i{background:currentColor;border-radius:1px}
+  .store-btn .stxt{display:flex;flex-direction:column;line-height:1.08;text-align:left}
+  .store-btn .stxt small{font-size:10px;font-weight:400;opacity:.72}
+  .store-btn .stxt b{font-size:15px;font-weight:600}
 
   nav{position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:rgba(0,0,0,.72);border-bottom:1px solid rgba(255,255,255,.10)}
   nav .wide{display:flex;align-items:center;height:52px;gap:16px}
@@ -178,9 +186,9 @@
     <a class="btn btn-fill" href="#download">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
       <span data-i18n="hero.cta_free">Download free</span></a>
-    <a class="btn-link" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
-      <span data-i18n="hero.cta_store">Get it on the Store</span>
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l6 6-6 6"/></svg></a>
+    <a class="store-btn" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+      <span class="win"><i></i><i></i><i></i><i></i></span>
+      <span class="stxt"><small data-i18n="hero.store_small">Get it from</small><b>Microsoft Store</b></span></a>
   </div>
   <p class="hero-by reveal">by LumiBear Studio</p>
 </div></header>
@@ -301,7 +309,7 @@ var I18N = {
     "nav.download":"Download free",
     "hero.title":"Zip. <span class=\"grad\">Done.</span>",
     "hero.sub":"Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.",
-    "hero.cta_free":"Download free","hero.cta_store":"Get it on the Store",
+    "hero.cta_free":"Download free","hero.cta_store":"Get it on the Store","hero.store_small":"Get it from",
     "click.eyebrow":"One click","click.title":"This is the whole thing.",
     "click.body":"Right-click, pick one line, and the archive appears right where you were. The same click on an archive extracts it.",
     "click.mi1":"Compress with OtterZip…","click.mi2":"Compress to Reports.zip","click.mi3":"Compress to Reports.7z",
@@ -332,7 +340,7 @@ var I18N = {
     "nav.download":"무료 다운로드",
     "hero.title":"압축은 <span class=\"grad\">간단하게.</span>",
     "hero.sub":"파일을 우클릭하면 압축, 아카이브를 우클릭하면 풀기. 앱을 열 일이 거의 없어요.",
-    "hero.cta_free":"무료 다운로드","hero.cta_store":"스토어에서 받기",
+    "hero.cta_free":"무료 다운로드","hero.cta_store":"스토어에서 받기","hero.store_small":"다운로드",
     "click.eyebrow":"클릭 한 번","click.title":"이게 전부예요.",
     "click.body":"우클릭하고 한 줄만 고르면 아카이브가 그 자리에 생겨요. 아카이브에 같은 우클릭이면 풀리고요.",
     "click.mi1":"OtterZip으로 압축…","click.mi2":"Reports.zip로 압축","click.mi3":"Reports.7z로 압축",
