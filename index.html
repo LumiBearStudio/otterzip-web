@@ -57,6 +57,11 @@
   nav .btn{font-size:14px;padding:7px 16px}
   .nav-gh{display:inline-flex;align-items:center;color:var(--sub);padding:6px;border-radius:8px;transition:color .18s,background .18s}
   .nav-gh:hover{color:var(--ink);background:rgba(255,255,255,.07)}
+  .nav-links{display:flex;align-items:center;gap:6px;margin-right:6px}
+  .nav-link{display:inline-flex;align-items:center;gap:6px;font-size:13.5px;font-weight:500;color:var(--sub);transition:color .18s,background .18s;padding:6px 10px;border-radius:8px}
+  .nav-link:hover{color:var(--ink);background:rgba(255,255,255,.07)}
+  .nav-link svg{width:16px;height:16px;color:var(--sub)}
+  .nav-link:hover svg{color:var(--ink)}
 
   .hero{text-align:center;padding:96px 0 0;position:relative}
   .hero::after{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:680px;height:340px;background:radial-gradient(ellipse at center,rgba(77,124,255,.12) 0%,transparent 70%);pointer-events:none;z-index:-1}
@@ -165,6 +170,16 @@
 <nav><div class="wide">
   <a class="brand" href="#top"><img src="assets/otter.png" alt="OtterZip"><span class="wm">OtterZip</span></a>
   <div class="spacer"></div>
+  <div class="nav-links">
+    <a class="nav-link" href="https://github.com/LumiBearStudio/OtterZip#readme" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      <span data-i18n="nav.help">Help</span>
+    </a>
+    <a class="nav-link" href="https://github.com/LumiBearStudio/OtterZip/issues" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span data-i18n="nav.issues">Issues</span>
+    </a>
+  </div>
   <div class="langpick">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.8 4 5.7 4 9s-1.5 6.2-4 9c-2.5-2.8-4-5.7-4-9s1.5-6.2 4-9z"/></svg>
     <select id="langsel" aria-label="Language"></select>
@@ -284,7 +299,7 @@
 var I18N = {
   en: {
     "meta.title":"OtterZip — the quiet archive tool for Windows",
-    "nav.download":"Download free",
+    "nav.help":"Help","nav.issues":"Issues","nav.download":"Download free",
     "hero.title":"Zip. <span class=\"grad\">Done.</span>",
     "hero.sub":"Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.",
     "hero.cta_free":"Download free","hero.cta_store":"Get it on the Store","hero.store_small":"Get it from",
@@ -312,7 +327,7 @@ var I18N = {
   },
   ko: {
     "meta.title":"OtterZip — 조용한 Windows 압축 도구",
-    "nav.download":"다운로드",
+    "nav.help":"도움말","nav.issues":"이슈","nav.download":"다운로드",
     "hero.title":"압축은 <span class=\"grad\">간단하게.</span>",
     "hero.sub":"파일을 우클릭하면 압축, 아카이브를 우클릭하면 풀기. 앱을 열 일이 거의 없어요.",
     "hero.cta_free":"직접 다운로드","hero.cta_store":"스토어에서 받기","hero.store_small":"다운로드",
