@@ -42,6 +42,8 @@
   .store-btn .stxt{display:flex;flex-direction:column;line-height:1.08;text-align:left}
   .store-btn .stxt small{font-size:10px;font-weight:400;opacity:.72}
   .store-btn .stxt b{font-size:15px;font-weight:600}
+  .store-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff;box-shadow:0 0 28px rgba(77,124,255,.42)}
+  .store-btn.primary:hover{background:var(--accent-hover);box-shadow:0 0 38px rgba(77,124,255,.55)}
 
   nav{position:sticky;top:0;z-index:100;backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);background:var(--nav-bg);border-bottom:1px solid var(--nav-border);transition:border-color .3s}
   nav .wide{display:flex;align-items:center;height:52px;gap:16px}
@@ -127,6 +129,8 @@
   .dlcard:hover{transform:translateY(-4px);box-shadow:0 24px 60px rgba(0,0,0,.5)}
   .dlcard.free{border-color:rgba(63,214,224,.5);box-shadow:0 0 0 1px rgba(63,214,224,.14),0 20px 50px rgba(0,0,0,.4)}
   .dlcard.free:hover{box-shadow:0 0 0 1px rgba(63,214,224,.2),0 28px 70px rgba(63,214,224,.12)}
+  .dlcard.store-highlight{border-color:rgba(77,124,255,.55);box-shadow:0 0 0 1px rgba(77,124,255,.2),0 20px 50px rgba(0,0,0,.4)}
+  .dlcard.store-highlight:hover{box-shadow:0 0 0 1px rgba(77,124,255,.32),0 28px 70px rgba(77,124,255,.18)}
   .dlcard .kick{display:flex;align-items:center;gap:10px;margin-bottom:8px}
   .dlcard h3{font-size:24px;font-weight:700}
   .dlcard .badge{font-size:14px;font-weight:700;padding:3px 11px;border-radius:980px}
@@ -171,12 +175,12 @@
   <h1 class="hero-title reveal" data-i18n="hero.title">Zip. <span class="grad">Done.</span></h1>
   <p class="hero-sub reveal" data-i18n="hero.sub">Right-click a file — it's zipped. Right-click an archive — it's out. You barely open the app.</p>
   <div class="hero-cta reveal">
-    <a class="btn btn-fill" href="#download">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
-      <span data-i18n="hero.cta_free">Download free</span></a>
-    <a class="store-btn" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+    <a class="store-btn primary" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
       <span class="win"><i></i><i></i><i></i><i></i></span>
       <span class="stxt"><small data-i18n="hero.store_small">Get it from</small><b>Microsoft Store</b></span></a>
+    <a class="btn btn-soft" href="#download">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span data-i18n="hero.cta_free">Direct download</span></a>
   </div>
   <p class="hero-by reveal"><img src="assets/otter.png" alt="">by LumiBear Studio</p>
 </div></header>
@@ -243,19 +247,21 @@
   <p class="sec-body" data-i18n="dl.body">The free download and the Store version are the exact same app. Pick whichever suits you.</p>
 </div>
 <div class="dlcards reveal">
-  <div class="dlcard free">
-    <div class="kick"><h3 data-i18n="dl.free_title">Free download</h3><span class="badge f" data-i18n="dl.free_tag">Free</span></div>
-    <p class="d" data-i18n="dl.free_body">Download straight from here. No ads, no account, nothing to sign up for.</p>
-    <div class="btnrow"><a class="btn btn-fill" data-dl href="#">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
-      <span data-i18n="dl.free_btn">Get it free</span></a></div>
-    <p class="foot" data-i18n="dl.free_foot">Windows 11 · MSIX installer · auto-updates</p>
+  <div class="dlcard store-highlight">
+    <div class="kick"><h3 data-i18n="dl.store_title">Microsoft Store</h3><span class="badge p" data-i18n="dl.store_tag">Recommended</span></div>
+    <p class="d" data-i18n="dl.store_body">Install and update automatically through the Microsoft Store. Supports active development.</p>
+    <div class="btnrow"><a class="btn btn-fill" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener">
+      <svg viewBox="0 0 24 24" fill="currentColor" width="18" height="18"><path d="M3 5.5L10.5 4.4V11.4H3V5.5ZM11.5 4.3L21 3V11.4H11.5V4.3ZM3 12.6H10.5V19.6L3 18.5V12.6ZM11.5 12.6H21V21L11.5 19.7V12.6Z"/></svg>
+      <span data-i18n="dl.store_btn">Get it from Microsoft Store</span></a></div>
+    <p class="foot" data-i18n="dl.store_foot">Windows 11 · Automatic updates · Recommended</p>
   </div>
   <div class="dlcard">
-    <div class="kick"><h3>Microsoft Store</h3></div>
-    <p class="d" data-i18n="dl.store_body">Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.</p>
-    <div class="btnrow"><a class="btn btn-soft" data-store href="https://apps.microsoft.com/detail/9NWQNGGSWJCL" target="_blank" rel="noopener"><span data-i18n="dl.store_btn">Get it from the Microsoft Store</span></a></div>
-    <p class="foot" data-i18n="dl.store_foot">Supports development · thank you</p>
+    <div class="kick"><h3 data-i18n="dl.free_title">Direct download</h3><span class="badge f" data-i18n="dl.free_tag">Free</span></div>
+    <p class="d" data-i18n="dl.free_body">Download the MSIX installer directly. Exactly the same app, no ads, no account required.</p>
+    <div class="btnrow"><a class="btn btn-soft" data-dl href="#">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12m0 0l-5-5m5 5l5-5M5 21h14"/></svg>
+      <span data-i18n="dl.free_btn">Direct download (.msix)</span></a></div>
+    <p class="foot" data-i18n="dl.free_foot">Windows 11 · Free MSIX installer</p>
   </div>
 </div>
 </section>
@@ -288,21 +294,22 @@ var I18N = {
     "native.body":"Built with C# and WinUI — a real native interface, not a web page in a window. Fluent design, light or dark, ten languages.",
     "fmt.eyebrow":"Formats","fmt.title":"Opens just about anything.",
     "fmt.body":"ZIP, 7z, RAR, TAR and more — with AES-256 and split archives when you need them.",
-    "dl.eyebrow":"How to get it","dl.title":"Free, or support us.",
-    "dl.body":"The free download and the Store version are the exact same app. Pick whichever suits you.",
-    "dl.free_title":"Free download","dl.free_tag":"Free",
-    "dl.free_body":"Download straight from here. No ads, no account, nothing to sign up for.",
-    "dl.free_btn":"Get it free","dl.free_foot":"Windows 11 · MSIX installer · auto-updates",
-    "dl.store_body":"Same app — buying it on the Store simply supports development. Updates arrive through the Store automatically.",
-    "dl.store_btn":"Get it from the Microsoft Store","dl.store_foot":"Supports development · thank you",
+    "dl.eyebrow":"Download","dl.title":"Get OtterZip for Windows 11.",
+    "dl.body":"Install seamlessly through the Microsoft Store, or download the installer directly.",
+    "dl.store_title":"Microsoft Store","dl.store_tag":"Recommended",
+    "dl.store_body":"Install and update automatically through the Microsoft Store. Supports active development.",
+    "dl.store_btn":"Get it from Microsoft Store","dl.store_foot":"Windows 11 · Automatic updates · Recommended",
+    "dl.free_title":"Direct download","dl.free_tag":"Free",
+    "dl.free_body":"Download the MSIX installer directly. Exactly the same app, no ads, no account required.",
+    "dl.free_btn":"Direct download (.msix)","dl.free_foot":"Windows 11 · Free MSIX installer",
     "footer.privacy":"Privacy"
   },
   ko: {
     "meta.title":"OtterZip — 조용한 Windows 압축 도구",
-    "nav.download":"무료 다운로드",
+    "nav.download":"다운로드",
     "hero.title":"압축은 <span class=\"grad\">간단하게.</span>",
     "hero.sub":"파일을 우클릭하면 압축, 아카이브를 우클릭하면 풀기. 앱을 열 일이 거의 없어요.",
-    "hero.cta_free":"무료 다운로드","hero.cta_store":"스토어에서 받기","hero.store_small":"다운로드",
+    "hero.cta_free":"직접 다운로드","hero.cta_store":"스토어에서 받기","hero.store_small":"다운로드",
 
     "simple.eyebrow":"심플","simple.title":"하나만, 제대로.",
     "simple.body":"모드도, 잡동사니도, 배울 것도 없어요. 창을 열어도 모든 게 예상한 자리에 있어요.",
@@ -315,13 +322,14 @@ var I18N = {
     "native.body":"C#과 WinUI로 만든 진짜 네이티브 인터페이스예요. 창 속 웹페이지가 아니라, Fluent 디자인에 라이트도 다크도 열 개 언어도 자연스럽게 어울려요.",
     "fmt.eyebrow":"지원 포맷","fmt.title":"웬만한 건 다 열려요.",
     "fmt.body":"ZIP·7z·RAR·TAR 등 여러 포맷 — 필요하면 AES-256 암호화와 분할 압축까지.",
-    "dl.eyebrow":"받는 방법","dl.title":"무료로, 또는 후원으로.",
-    "dl.body":"무료 다운로드와 스토어 버전은 완전히 같은 앱이에요. 편한 쪽으로 받으세요.",
-    "dl.free_title":"무료 다운로드","dl.free_tag":"무료",
-    "dl.free_body":"홈페이지에서 바로 받기. 광고도, 계정도, 가입도 없어요.",
-    "dl.free_btn":"무료로 받기","dl.free_foot":"Windows 11 · MSIX 설치 · 자동 업데이트",
-    "dl.store_body":"앱은 완전히 동일해요. 스토어 구매는 순수하게 개발을 후원하는 방법입니다. 업데이트는 스토어로 자동 전달돼요.",
-    "dl.store_btn":"Microsoft Store에서 받기","dl.store_foot":"개발 후원 · 감사합니다",
+    "dl.eyebrow":"다운로드","dl.title":"Windows 11용 OtterZip 다운로드.",
+    "dl.body":"Microsoft Store에서 가장 간편하게 설치하거나, 설치 파일을 직접 받으세요.",
+    "dl.store_title":"Microsoft Store","dl.store_tag":"추천",
+    "dl.store_body":"스토어를 통해 원클릭으로 설치하고 자동 업데이트를 받으세요. 개발을 직접 후원하는 가장 좋은 방법입니다.",
+    "dl.store_btn":"Microsoft Store에서 받기","dl.store_foot":"Windows 11 · 자동 업데이트 · 추천",
+    "dl.free_title":"직접 다운로드","dl.free_tag":"무료",
+    "dl.free_body":"홈페이지에서 MSIX 설치 파일을 바로 받습니다. 스토어 버전과 완전히 동일하며 광고나 가입이 없습니다.",
+    "dl.free_btn":"직접 무료 다운로드 (.msix)","dl.free_foot":"Windows 11 · 무료 MSIX 설치 파일",
     "footer.privacy":"개인정보"
   }
 };
