@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>OtterZip · 관리자 통계</title>
+<style>
+  :root{
+    --bg:#000; --panel:#111114; --card:#1a1a1d; --line:#2a2a2e;
+    --ink:#f5f5f7; --sub:#a1a1a6; --faint:#6e6e73;
+    --accent:#4d7cff; --accent2:#3fd6e0; --up:#3fd6a0;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",system-ui,sans-serif;
+    -webkit-font-smoothing:antialiased;padding:28px 18px 40px}
+  .wrap{max-width:760px;margin:0 auto}
+  .sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  .head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:20px}
+  .h-title{font-size:17px;font-weight:650;letter-spacing:-.2px}
+  .h-sub{color:var(--faint);font-size:12px;margin-top:4px}
+  .updated{color:var(--faint);font-size:11px;white-space:nowrap;text-align:right}
+  .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+  .kpi{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:13px 14px}
+  .kpi .k{color:var(--sub);font-size:11px}
+  .kpi .v{font-size:26px;font-weight:680;letter-spacing:-1px;margin:4px 0 3px}
+  .kpi .d{font-size:11px;color:var(--faint)}
+  .kpi .d.up{color:var(--up)}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 16px;margin-bottom:16px}
+  .ct{font-weight:600;font-size:13px;margin-bottom:12px}
+  .cm{color:var(--faint);font-weight:400}
+  svg.chart{width:100%;height:170px;display:block;overflow:visible}
+  svg.chart rect{fill:var(--accent);transition:fill .12s}
+  svg.chart rect:hover{fill:var(--accent2)}
+  .xlab{display:flex;justify-content:space-between;color:var(--faint);font-size:10px;margin-top:6px}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid2 .card{margin-bottom:0}
+  table{width:100%;border-collapse:collapse;font-size:12px}
+  th{text-align:left;color:var(--sub);font-weight:500;font-size:11px;padding-bottom:6px}
+  td{padding:5px 0;border-top:1px solid var(--line)}
+  td:nth-child(2){font-weight:600;width:70px}
+  td .bar{display:block;height:6px;border-radius:4px;background:var(--accent);opacity:.8}
+  .muted{border-style:dashed;background:transparent}
+  .soon{color:var(--faint);font-size:12px}
+  .soon p{margin:7px 0 0}
+  .foot{color:var(--faint);font-size:10.5px;line-height:1.6;margin-top:6px}
+  .err{color:#ff6b6b;font-size:13px;padding:14px;background:var(--card);border:1px solid var(--line);border-radius:12px}
+  @media(max-width:560px){.kpis{grid-template-columns:repeat(2,1fr)}.grid2{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+  <h1 class="sr-only">OtterZip admin download statistics dashboard</h1>
+  <div class="head">
+    <div>
+      <div class="h-title">OtterZip · 관리자 통계</div>
+      <div class="h-sub">직접 다운로드 (GitHub Releases) · unlisted</div>
+    </div>
+    <div class="updated" id="updated">…</div>
+  </div>
+  <div id="body"><div class="card">불러오는 중…</div></div>
+</div>
+
+<script>
+(function(){
+  var $ = function(s,el){return (el||document).querySelector(s)};
+  function fmt(n){return (n==null?"—":n.toLocaleString())}
+
+  fetch("../stats/downloads.json?_="+Date.now())
+    .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
+    .then(render)
+    .catch(function(e){
+      $("#body").innerHTML='<div class="err">데이터를 못 불러왔습니다: '+e.message+
+        '<br>stats/downloads.json 이 아직 없거나(첫 스냅샷 대기) 경로가 다를 수 있습니다.</div>';
+    });
+
+  function render(d){
+    var series = (d.series||[]).slice();
+    var byVer  = d.by_version||{};
+    $("#updated").textContent = "업데이트 " + (d.updated||"—");
+
+    var total = series.length ? series[series.length-1].total : 0;
+    var lastDaily = series.length ? series[series.length-1].daily : null;
+    var last7 = series.slice(-7).reduce(function(a,e){return a+(e.daily||0)},0);
+    var avg7 = series.length ? Math.round(last7/Math.min(7,series.length)) : 0;
+
+    // top version share
+    var verEntries = Object.keys(byVer).map(function(k){return [k,byVer[k]]})
+                       .sort(function(a,b){return b[1]-a[1]});
+    var verTotal = verEntries.reduce(function(a,e){return a+e[1]},0)||1;
+    var topVer = verEntries[0] ? verEntries[0][0].replace(/^v/,"").replace(/\.0$/,"") : "—";
+    var topShare = verEntries[0] ? Math.round(verEntries[0][1]/verTotal*100) : 0;
+
+    var recent = series.slice(-30);
+    var maxDaily = Math.max(1, recent.reduce(function(m,e){return Math.max(m,e.daily||0)},0));
+    var W=720,H=170,n=recent.length,gap=n>1?Math.max(2,Math.min(9,(W/n)*0.25)):0;
+    var bw=n?(W-gap*(n-1))/n:W;
+    var bars="";
+    recent.forEach(function(e,i){
+      var h=Math.max(2,(e.daily||0)/maxDaily*(H-6));
+      bars+='<rect x="'+(i*(bw+gap)).toFixed(1)+'" y="'+(H-h).toFixed(1)+
+            '" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="2">'+
+            '<title>'+e.date+' · '+(e.daily||0)+'회</title></rect>';
+    });
+    var firstD = recent.length?recent[0].date.slice(5):"";
+    var lastD  = recent.length?recent[recent.length-1].date.slice(5):"";
+
+    var verRows = verEntries.map(function(e){
+      var pct=Math.round(e[1]/verTotal*100);
+      return '<tr><td>'+e[0]+'</td><td>'+fmt(e[1])+'</td>'+
+             '<td><i class="bar" style="width:'+pct+'%"></i></td></tr>';
+    }).join("") || '<tr><td colspan="3" style="color:var(--faint)">데이터 없음</td></tr>';
+
+    $("#body").innerHTML =
+      '<div class="kpis">'+
+        kpi("누적 다운로드", fmt(total), "직접 다운로드 합계") +
+        kpi("최근 일간", fmt(lastDaily), "마지막 스냅샷", lastDaily>0) +
+        kpi("최근 7일", fmt(last7), "일평균 "+avg7) +
+        kpi("최신 버전", topVer, "점유 "+topShare+"%") +
+      '</div>'+
+      '<div class="card"><div class="ct">일별 다운로드 <span class="cm">· 최근 '+recent.length+'일</span></div>'+
+        '<svg class="chart" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="daily downloads">'+bars+'</svg>'+
+        '<div class="xlab"><span>'+firstD+'</span><span>'+lastD+'</span></div></div>'+
+      '<div class="grid2">'+
+        '<div class="card"><div class="ct">버전별</div><table>'+
+          '<tr><th>버전</th><th>다운로드</th><th></th></tr>'+verRows+'</table></div>'+
+        '<div class="card muted"><div class="ct">방문 트래픽 <span class="cm">· 옵션(2단계)</span></div>'+
+          '<div class="soon"><p>정적 사이트는 방문을 스스로 기록 못 함. 켜려면 GoatCounter(쿠키·개인정보 없음) 연동.</p>'+
+          '<p>“no tracking” 브랜드 판단에 따라 켜고 끔.</p></div></div>'+
+      '</div>'+
+      '<div class="foot">출처: GitHub Releases API(누적) · 일별은 예약 Action이 매일 00:05 UTC 스냅샷 → 차이 계산. '+
+        '일별 수치는 첫 스냅샷일부터 누적됩니다. Store(Partner Center) 다운로드는 미포함. '+
+        'download_count는 봇/CDN 재요청 일부를 포함할 수 있습니다.</div>';
+  }
+
+  function kpi(k,v,d,up){
+    return '<div class="kpi"><div class="k">'+k+'</div><div class="v">'+v+'</div>'+
+           '<div class="d'+(up?' up':'')+'">'+d+'</div></div>';
+  }
+})();
+</script>
+</body>
+</html>

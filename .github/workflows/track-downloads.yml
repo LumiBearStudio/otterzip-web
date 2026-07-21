@@ -1,0 +1,43 @@
+name: track-downloads
+
+# Snapshots the cumulative GitHub-release download counts once a day and
+# commits the daily delta into stats/downloads.json, which the (unlisted)
+# /admin/ dashboard reads. No server, no third-party tracker.
+
+on:
+  schedule:
+    - cron: "5 0 * * *" # 00:05 UTC daily
+  workflow_dispatch: {} # manual "Run workflow" button
+
+permissions:
+  contents: write
+
+concurrency:
+  group: track-downloads
+  cancel-in-progress: false
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Snapshot download counts
+        env:
+          GH_TOKEN: ${{ github.token }} # public-repo read needs no extra scope
+        run: |
+          set -euo pipefail
+          TOTAL=$(gh api repos/LumiBearStudio/OtterZip/releases \
+                  --jq 'reduce .[] as $r (0; . + ([$r.assets[].download_count] | add // 0))')
+          BYVER=$(gh api repos/LumiBearStudio/OtterZip/releases \
+                  --jq '[.[] | {(.tag_name): ([.assets[].download_count] | add // 0)}] | add // {}')
+          echo "total=$TOTAL"
+          python3 stats/append.py "$TOTAL" "$BYVER"
+
+      - name: Commit snapshot
+        run: |
+          git config user.name  "otterzip-stats-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stats/downloads.json
+          git diff --cached --quiet || git commit -m "stats: snapshot $(date -u +%F)"
+          git push
