@@ -67,15 +67,21 @@
   var $ = function(s,el){return (el||document).querySelector(s)};
   function fmt(n){return (n==null?"—":n.toLocaleString())}
 
-  fetch("../stats/downloads.json?_="+Date.now())
-    .then(function(r){ if(!r.ok) throw new Error("HTTP "+r.status); return r.json(); })
-    .then(render)
+  function getJson(u){
+    return fetch(u+"?_="+Date.now()).then(function(r){
+      if(!r.ok) throw new Error("HTTP "+r.status); return r.json();
+    });
+  }
+  Promise.all([
+    getJson("../stats/downloads.json"),
+    getJson("../stats/visits.json").catch(function(){ return null; }) // optional
+  ]).then(function(res){ render(res[0], res[1]); })
     .catch(function(e){
       $("#body").innerHTML='<div class="err">데이터를 못 불러왔습니다: '+e.message+
         '<br>stats/downloads.json 이 아직 없거나(첫 스냅샷 대기) 경로가 다를 수 있습니다.</div>';
     });
 
-  function render(d){
+  function render(d, visits){
     var series = (d.series||[]).slice();
     var byVer  = d.by_version||{};
     $("#updated").textContent = "업데이트 " + (d.updated||"—");
@@ -125,9 +131,7 @@
       '<div class="grid2">'+
         '<div class="card"><div class="ct">버전별</div><table>'+
           '<tr><th>버전</th><th>다운로드</th><th></th></tr>'+verRows+'</table></div>'+
-        '<div class="card muted"><div class="ct">방문 트래픽 <span class="cm">· 옵션(2단계)</span></div>'+
-          '<div class="soon"><p>정적 사이트는 방문을 스스로 기록 못 함. 켜려면 GoatCounter(쿠키·개인정보 없음) 연동.</p>'+
-          '<p>“no tracking” 브랜드 판단에 따라 켜고 끔.</p></div></div>'+
+        trafficCard(visits)+
       '</div>'+
       '<div class="foot">출처: GitHub Releases API(누적) · 일별은 예약 Action이 매일 00:05 UTC 스냅샷 → 차이 계산. '+
         '일별 수치는 첫 스냅샷일부터 누적됩니다. Store(Partner Center) 다운로드는 미포함. '+
@@ -137,6 +141,31 @@
   function kpi(k,v,d,up){
     return '<div class="kpi"><div class="k">'+k+'</div><div class="v">'+v+'</div>'+
            '<div class="d'+(up?' up':'')+'">'+d+'</div></div>';
+  }
+
+  function trafficCard(visits){
+    var vs = (visits && visits.series) ? visits.series : [];
+    if(!vs.length){
+      // Not activated yet: GoatCounter code/token not set on the repo.
+      return '<div class="card muted"><div class="ct">방문 트래픽 <span class="cm">· 연동 대기</span></div>'+
+        '<div class="soon"><p>GoatCounter(쿠키·개인정보 없음) 연동 대기 중.</p>'+
+        '<p>repo에 GOATCOUNTER_CODE 변수 + GOATCOUNTER_TOKEN 비밀을 설정하면 여기에 일별 방문수가 채워집니다.</p></div></div>';
+    }
+    var recent = vs.slice(-30);
+    var last7 = recent.slice(-7).reduce(function(a,e){return a+(e.visits||0)},0);
+    var max = Math.max(1, recent.reduce(function(m,e){return Math.max(m,e.visits||0)},0));
+    var W=340,H=64,n=recent.length,gap=n>1?Math.max(1,Math.min(6,(W/n)*0.25)):0;
+    var bw=n?(W-gap*(n-1))/n:W;
+    var bars="";
+    recent.forEach(function(e,i){
+      var h=Math.max(2,(e.visits||0)/max*(H-4));
+      bars+='<rect x="'+(i*(bw+gap)).toFixed(1)+'" y="'+(H-h).toFixed(1)+
+            '" width="'+bw.toFixed(1)+'" height="'+h.toFixed(1)+'" rx="1.5">'+
+            '<title>'+e.date+' · '+(e.visits||0)+'회</title></rect>';
+    });
+    return '<div class="card"><div class="ct">방문 트래픽 <span class="cm">· 최근 7일 '+fmt(last7)+'</span></div>'+
+      '<svg class="chart" style="height:64px" viewBox="0 0 '+W+' '+H+'" preserveAspectRatio="none" role="img" aria-label="daily visits">'+bars+'</svg>'+
+      '</div>';
   }
 })();
 </script>

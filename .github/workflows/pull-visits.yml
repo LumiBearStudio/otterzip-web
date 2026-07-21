@@ -1,0 +1,61 @@
+name: pull-visits
+
+# Pulls yesterday's page-visit total from GoatCounter (cookieless, no PII) into
+# stats/visits.json, which the /admin/ dashboard renders next to downloads.
+#
+# ACTIVATION (nothing runs until these are set on the otterzip-web repo):
+#   - repository VARIABLE  GOATCOUNTER_CODE   = your site code, e.g. "otterzip"
+#   - repository SECRET    GOATCOUNTER_TOKEN  = an API token from
+#     https://<code>.goatcounter.com  ->  Settings -> API
+# Until both exist the job runs but no-ops (so the schedule never errors).
+
+on:
+  schedule:
+    - cron: "10 0 * * *" # 00:10 UTC daily (just after the download snapshot)
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: pull-visits
+  cancel-in-progress: false
+
+jobs:
+  visits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Pull yesterday's pageviews
+        if: ${{ vars.GOATCOUNTER_CODE != '' }}
+        env:
+          CODE: ${{ vars.GOATCOUNTER_CODE }}
+          TOKEN: ${{ secrets.GOATCOUNTER_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -z "${TOKEN:-}" ]; then
+            echo "GOATCOUNTER_CODE is set but the GOATCOUNTER_TOKEN secret is missing — skipping."
+            exit 0
+          fi
+          Y=$(date -u -d "yesterday" +%F)
+          START="${Y}T00:00:00Z"
+          END="$(date -u +%F)T00:00:00Z"
+          RESP=$(curl -sf -H "Authorization: Bearer ${TOKEN}" \
+            "https://${CODE}.goatcounter.com/api/v0/stats/total?start=${START}&end=${END}")
+          COUNT=$(printf '%s' "$RESP" | python3 -c "import sys,json; print(int(json.load(sys.stdin).get('total_utc',0)))")
+          echo "visits on ${Y}: ${COUNT}"
+          python3 stats/append_visits.py "${Y}" "${COUNT}"
+
+      - name: Not configured
+        if: ${{ vars.GOATCOUNTER_CODE == '' }}
+        run: echo "GoatCounter not configured yet (set repo var GOATCOUNTER_CODE + secret GOATCOUNTER_TOKEN). No-op."
+
+      - name: Commit
+        if: ${{ vars.GOATCOUNTER_CODE != '' }}
+        run: |
+          git config user.name  "otterzip-stats-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add stats/visits.json
+          git diff --cached --quiet || git commit -m "stats: visits $(date -u +%F)"
+          git push
